@@ -1,0 +1,27 @@
+{
+  "name": "uvote",
+  "version": "1.0.0",
+  "description": "'Fullstack application with User Authentication whereby registered users create polls that can be taken by anyone with the url'",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Wesley L. Handy",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "body-parser": "^1.18.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.5",
+    "method-override": "^2.3.9",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
+    "morgan": "^1.8.2",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "shortid": "^2.2.8",
+    "socket.io": "^2.0.3"
+  }
+}
