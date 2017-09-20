@@ -5,49 +5,47 @@ const User = require('../models/User');
 
 module.exports = function(app) {
 
-  // sign-up new user
-  router.post('/signup', (req, res) => {
-    let userData = {
-      username: req.body.username,
-      password: req.body.password
-    }
-    // console.log(`new user in api:`);
-    // console.log(req.body);
-
-    let newUser = new User(userData);
-
-    newUser.save(function(err, data) {
-
-      if(err) {
-
-        if (err.message.includes('duplicate')) {
-          res.status(500).send({title: 'Duplicate Username', message: 'Please choose another username. Try using your email address.'});
-        } else if (err.errors.password) {
-          res.status(500).send({title: 'Insecure Password', message: err.errors.password.message});
-        } else if (err.errors.username) {
-          res.status(500).send({title: 'Invalid Username', message: err.errors.username.message});
+    // sign-up new user
+    router.post('/signup', (req, res) => {
+        let userData = {
+            username: req.body.username,
+            password: req.body.password
         }
-      } else {
-        res.json(data);
-      }
+
+        let newUser = new User(userData);
+
+        newUser.save(function(err, data) {
+
+            if (err) {
+
+                if (err.message.includes('duplicate')) {
+                    res.status(500).send({ title: 'Duplicate Username', message: 'Please choose another username. Try using your email address.' });
+                } else if (err.errors.password) {
+                    res.status(500).send({ title: 'Insecure Password', message: err.errors.password.message });
+                } else if (err.errors.username) {
+                    res.status(500).send({ title: 'Invalid Username', message: err.errors.username.message });
+                }
+            } else {
+                res.json(data);
+            }
+        });
     });
-  });
 
-  //
-  router.post('/login', passport.authenticate('local'), function(req, res) {
-    if (req.user) {
-      res.json(req.user)
-    } else {
-      res.status(req.statusCode).send({message:req.statusMessage});
-    }
+    //
+    router.post('/login', passport.authenticate('local'), function(req, res) {
+        if (req.user) {
+            res.json(req.user)
+        } else {
+            res.status(req.statusCode).send({ message: req.statusMessage });
+        }
 
-  });
+    });
 
-  router.get('/logout', function(req, res) {
-    req.logout();
-    res.send({message:'Logged Out'});
-  });
+    router.get('/logout', function(req, res) {
+        req.logout();
+        res.send({ message: 'Logged Out' });
+    });
 
-  app.use('/api', router);
+    app.use('/api', router);
 
 }
