@@ -9,7 +9,8 @@ module.exports = function(app) {
     router.post('/signup', (req, res) => {
         let userData = {
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            creatorId: shortid.generate()
         }
 
         let newUser = new User(userData);
@@ -19,11 +20,17 @@ module.exports = function(app) {
             if (err) {
 
                 if (err.message.includes('duplicate')) {
-                    res.status(500).send({ title: 'Duplicate Username', message: 'Please choose another username. Try using your email address.' });
+                    res.statusCode = 500;
+                    res.send({ title: 'Duplicate Username', message: 'Please choose another username. Try using your email address.' });
                 } else if (err.errors.password) {
-                    res.status(500).send({ title: 'Insecure Password', message: err.errors.password.message });
+                    res.statusCode = 500;
+                    res.send({ title: 'Insecure Password', message: err.errors.password.message });
                 } else if (err.errors.username) {
-                    res.status(500).send({ title: 'Invalid Username', message: err.errors.username.message });
+                    res.statusCode = 500;
+                    res.send({ title: 'Invalid Username', message: err.errors.username.message });
+                } else {
+                    res.statusCode = 400;
+                    res.send({ title: 'Server Error', message: 'We could not process your request. Please check your data and your connection and try again.' })
                 }
             } else {
                 res.json(data);
@@ -36,7 +43,8 @@ module.exports = function(app) {
         if (req.user) {
             res.json(req.user)
         } else {
-            res.status(req.statusCode).send({ message: req.statusMessage });
+            res.statusCode = req.statusCode;
+            res.send({ message: req.statusMessage });
         }
 
     });

@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const passportLocalMongoose = require('passport-local-mongoose');
+const shortid = require('shortid');
 const saltFactor = 10;
+const Schema = mongoose.Schema;
 
-const UserSchema = new mongoose.Schema({
+
+const UserSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -19,7 +22,11 @@ const UserSchema = new mongoose.Schema({
             message: 'Password must be at least 8 characters in length include at least 1 lowercase letter, 1 capital letter, 1 number and 1 special character (ie. #?!@$%^&*-_).'
         }
     },
-    medications: Array
+    creatorId: {
+        type: String,
+        required: true
+    },
+    polls: Array
 });
 
 UserSchema.plugin(passportLocalMongoose);

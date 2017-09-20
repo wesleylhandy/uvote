@@ -8,6 +8,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 // set Mongoose promises to es6 promises
 mongoose.Promise = Promise;
@@ -15,13 +16,6 @@ mongoose.Promise = Promise;
 const app = express();
 // Specify the port.
 var port = process.env.PORT || 3000;
-
-// Make public a static dir
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
-}
-
-app.set('port', port);
 
 // Use morgan for logs 
 app.use(logger("dev"));
@@ -43,11 +37,14 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+app.set('port', port);
+
 // MongoDB
 var uri = 'mongodb://' + process.env.MLAB_USER + ':' + process.env.MLAB_PASS + '@ds135983.mlab.com:35983/devserver';
 
 //connect to mongodb//set controllers and sockets here to have access to DB
-mongoose.connect(uri).then(() => console.log('connected to DB!')).catch(err => console.log(err));
+mongoose.connect(uri, { useMongoClient: true }).then(() => console.log('connected to DB!')).catch(err => console.log(err));
 
 //set up passport for user authentication
 const passportConfig = require('./config/passport');
@@ -59,10 +56,17 @@ require("./controllers/auth-controller.js")(app);
 require("./controllers/poll-controller.js")(app);
 require("./controllers/vote-controller.js")(app);
 
-
+// Make public a static dir
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+} else {
+    app.get('/', function(req, res) {
+        res.sendFile(path.join(__dirname, 'client/public/index.html'));
+    });
+}
 // Listen on port 3000 or assigned port
-const server = app.listen(port, function() {
-    console.log(`App running on ${port}`);
+const server = app.listen(app.get('port'), function() {
+    console.log(`App running on ${app.get('port')}`);
 });
 
 // socket.io server for websockets
