@@ -14,7 +14,11 @@ const PollSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    inputs: [Schema.Types.Mixed]
+    inputs: [Schema.Types.Mixed],
+    status: {
+        type: String,
+        default: 'incomplete'
+    }
 });
 
 PollSchema.method('updatepoll', function(pollId, input, cb) {
