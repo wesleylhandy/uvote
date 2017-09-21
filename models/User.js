@@ -2,10 +2,42 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const passportLocalMongoose = require('passport-local-mongoose');
 const shortid = require('shortid');
+
 const saltFactor = 10;
 const Schema = mongoose.Schema;
 
+// defining three schemas, Option will be child or Poll, Poll will be child of User - to create nesting of documents. Better for data manipulation and aggregation.
+const OptionSchema = new Schema({
+    order: {
+        type: Number,
+        required: true
+    },
+    text: {
+        type: String,
+        required: true
+    },
+    votes: {
+        type: Number,
+        default: 0
+    }
+});
 
+const PollSchema = new Schema({
+    title: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    url: {
+        type: String,
+        required: true
+    },
+    inputs: [OptionSchema],
+    status: {
+        type: String,
+        default: 'incomplete'
+    }
+});
 const UserSchema = new Schema({
     username: {
         type: String,
@@ -26,7 +58,7 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    polls: Array
+    polls: [PollSchema]
 });
 
 UserSchema.plugin(passportLocalMongoose);
@@ -57,5 +89,6 @@ UserSchema.method('comparePassword', function(candidatePassword, dbPassword, cb)
         cb(null, isMatch);
     });
 });
+
 
 module.exports = mongoose.model('User', UserSchema);
