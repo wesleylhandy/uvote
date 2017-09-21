@@ -31,6 +31,15 @@ module.exports = function(app) {
             });
     });
 
+    router.get('/polls/byUser/single/:id', function(req, res) {
+        Poll.findOne({_id: req.params.id})
+            .then(poll => res.json(poll))
+            .catch(err => {
+                res.statusCode = 500;
+                res.json({ title: 'Error', message: err });
+            });
+    });
+
     router.get('/polls/all/', function(req, res) {
         Poll.find({ status: 'complete' })
             .then(polls => res.json(polls))
@@ -43,7 +52,7 @@ module.exports = function(app) {
     router.post('/polls/add/:creatorId', function(req, res) {
         let pollData = {
             title: req.body.title,
-            url: req.body.creatorId + '/' + encodeURIComponent(req.body.title),
+            url: req.params.creatorId + '/' + encodeURIComponent(req.body.title),
             createdBy: req.params.creatorId
         }
 
@@ -77,7 +86,7 @@ module.exports = function(app) {
             });
     });
 
-    router.post('/polls/complete/:pollId', function(req, res) {
+    router.put('/polls/complete/:pollId', function(req, res) {
         Poll.findOneAndUpdate({ _id: req.params.pollId }, { status: 'complete' })
             .then(poll => res.json({ poll }))
             .catch(err => {
