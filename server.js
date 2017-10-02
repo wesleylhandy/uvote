@@ -15,7 +15,7 @@ mongoose.Promise = Promise;
 // Initialize Express Server
 const app = express();
 // Specify the port.
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3001;
 
 // Use morgan for logs 
 app.use(logger("dev"));
