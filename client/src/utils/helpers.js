@@ -6,7 +6,7 @@ export function login(user) {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
@@ -27,7 +27,7 @@ export function signup(user) {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
@@ -38,30 +38,38 @@ export function getAllUsersPolls() {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
 
-export function getAllMyPolls(creatorId) {
+export function getAllMyPolls(creatorId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.get(`/api/polls/byUser/all/${creatorId}`).then(response => {
-            resolve(response);
-        }).catch(err => {
-            if (err) reject(err.response.data);
-            else reject('Request Error');
-        });
+        if (isAuth) {
+            axios.get(`/api/polls/byUser/all/${creatorId}`).then(response => {
+                resolve(response);
+            }).catch(err => {
+                if (err) reject(err.response.data);
+                else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+            });
+        } else {
+            reject({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
     });
 }
 
-export function getMyIncompletePolls(creatorId) {
+export function getMyIncompletePolls(creatorId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.get(`/api/polls/byUser/incomplete/${creatorId}`).then(response => {
-            resolve(response);
-        }).catch(err => {
-            if (err) reject(err.response.data);
-            else reject('Request Error');
-        });
+        if (isAuth) {
+            axios.get(`/api/polls/byUser/incomplete/${creatorId}`).then(response => {
+                resolve(response);
+            }).catch(err => {
+                if (err) reject(err.response.data);
+                else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+            });
+        } else {
+            reject({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
     });
 }
 
@@ -71,7 +79,7 @@ export function getAnotherUsersPolls(creatorId) {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
@@ -82,74 +90,87 @@ export function getSinglePoll(id) {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
 
-export function createPoll(creatorId, title) {
+export function createPoll(creatorId, title, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.post(`/api/polls/add/${creatorId}`, { title }).then(response => {
+
+        axios.post(`/api/polls/add/${creatorId}`, { title, isAuth }).then(response => {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+
+    })
+}
+
+export function addOption(creatorId, pollId, order, text, isAuth) {
+    return new Promise((resolve, reject) => {
+        axios.post(`/api/polls/inputs/add/${creatorId}`, { pollId, order, text, isAuth }).then(response => {
+            resolve(response);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     })
 }
 
-export function addOption(pollId, order, text) {
+export function savePoll(creatorId, pollId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.post(`/api/polls/inputs/add/${pollId}`, { order, text }).then(response => {
+        axios.put(`/api/polls/complete/${creatorId}`, { pollId, isAuth }).then(response => {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     })
 }
 
-export function savePoll(pollId) {
+export function changeOptionOrder(creatorId, pollId, options, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.put(`/api/polls/complete/${pollId}`).then(response => {
+        axios.put(`/api/polls/inputs/reorder/${creatorId}`, { pollId, options, isAuth }).then(response => {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
-        });
-    })
-}
-
-export function changeOptionOrder(pollId, text) {
-    return new Promise((resolve, reject) => {
-        axios.put(`/api/polls/inputs/reorder/${pollId}`, { text }).then(response => {
-            resolve(response);
-        }).catch(err => {
-            if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     })
 }
 
 
-export function deleteOption(pollId, text) {
+export function deleteOption(creatorId, pollId, optionId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.put(`/api/polls/inputs/delete/${pollId}`, { text }).then(response => {
+        axios.put(`/api/polls/inputs/delete/${creatorId}`, { pollId, optionId, isAuth }).then(response => {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }
 
-export function deletePoll(pollId, text, createdBy) {
+export function deletePoll(pollId, creatorId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.delete(`/api/polls/delete/${pollId}`, { createdBy }).then(response => {
+        axios.delete(`/api/polls/delete/${creatorId}`, { pollId, isAuth }).then(response => {
             resolve(response);
         }).catch(err => {
             if (err) reject(err.response.data);
-            else reject('Request Error');
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+    });
+}
+
+export function vote(pollId, creatorId, optionId) {
+    return new Promise((resolve, reject) => {
+        axios.put(`/api/polls/inputs/vote/${creatorId}`, { pollId, optionId }).then(response => {
+            resolve(response);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
         });
     });
 }

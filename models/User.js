@@ -10,11 +10,13 @@ const Schema = mongoose.Schema;
 const OptionSchema = new Schema({
     order: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
-    text: {
+    title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     votes: {
         type: Number,
@@ -65,7 +67,7 @@ UserSchema.plugin(passportLocalMongoose);
 
 // Pre-save of user to database, hash password if password is modified or new
 UserSchema.pre('save', function(next) {
-    const user = this
+    const user = this;
     if (!user.isModified('password'))
         return next();
 

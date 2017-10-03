@@ -11,7 +11,7 @@ module.exports = function(app) {
                 var completedPolls = user.polls.filter(function(poll) {
                     return poll.status == 'complete'
                 });
-                res.json(completedPolls);
+                res.json({ polls: completedPolls });
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -29,7 +29,7 @@ module.exports = function(app) {
                 });
                 res.json(completedPolls);
             })
-            .then(user => res.json(user.polls))
+            .then(user => res.json({ polls: user.polls }))
             .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
@@ -38,7 +38,7 @@ module.exports = function(app) {
 
     router.get('/polls/byUser/all/:creatorId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
-            .then(user => res.json(user.polls))
+            .then(user => res.json(polls { user.polls }))
             .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
@@ -48,7 +48,7 @@ module.exports = function(app) {
     router.get('/polls/byUser/single/:creatorId/:pollId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                res.json(user.polls.id(req.params.pollId))
+                res.json({ poll: user.polls.id(req.params.pollId) });
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -77,78 +77,132 @@ module.exports = function(app) {
                     res.statusCode = 500;
                     return res.json({ title: 'Error', message: err });
                 }
-                res.json(polls);
+                res.json({ polls });
             }
         );
     });
 
     router.post('/polls/add/:creatorId', function(req, res) {
-        let pollData = {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
+
+        let data = {
             title: req.body.title,
             url: req.params.creatorId + '/' + encodeURIComponent(req.body.title),
         }
 
-        User.find({ creatorId: req.params.creatorId }).then(user => {
-            if (user.polls.indexOf(pollData.title) >= 0) {
-
+        User.findOne({ creatorId: req.params.creatorId })
+            .then(user => {
+                var index = user.polls.indexOf({ title: data.title });
+                if (index >= 0) {
+                    res.statusCode = 409;
+                    res.send({ title: 'Error', message: 'Please choose a different title.' })
+                } else {
+                    user.polls.push(data);
+                    user.save(function(err) {
+                        if (err) {
+                            res.statusCode = 500;
+                            return res.json({ title: 'Error', message: err });
+                        }
+                        console.log('Success!');
+                        res.json({ polls: user.polls });
+                    });
+                }
+            }).catch(err => {
                 res.statusCode = 500;
-                res.send({ title: 'Error', message: 'Please choose a different title.' })
-            } else {
-                user.polls.push(pollData);
-                user.save();
-
-
-            }
-        }).catch(err => {
-            res.statusCode = 500;
-            return res.json({ title: 'Error', message: err });
-        });
+                return res.json({ title: 'Error', message: err });
+            });
     });
 
-    router.post('/polls/inputs/add/:pollId', function(req, res) {
-        let inputData = {
-            text: req.body.text,
-            order: req.body.order,
-            pollId: req.params.pollId
+    router.post('/polls/inputs/add/:creatorId', function(req, res) {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
 
-        let newOption = new Option(inputData);
+        let data = {
+            title = req.body.text,
+            order = req.body.order,
+        }
 
-        newOption.save(function(err, data) {
-            if (err) {
-                res.statusCode = 500;
-                res.send({ title: 'Error', message: 'Please choose a different title.' })
-            } else {
-                Poll.findOneAndUpdate({ _id: req.params.pollId }, {
-                        $addToSet: {
-                            inputs: {
-                                data
-                            }
+        User.findOne({ creatorId: req.params.creatorId })
+            .then(user => {
+                var index = user.polls.id(data.pollId).inputs.indexOf({ title: data.title });
+                if (index >= 0) {
+                    res.statusCode = 409;
+                    res.send({ title: 'Error', message: 'Duplicate Entry Error.' });
+                } else {
+                    user.polls.id(pollId).inputs.push(data);
+                    user.save(function(err) {
+                        if (err) {
+                            res.statusCode = 500;
+                            return res.json({ title: 'Error', message: err });
                         }
-                    }, { new: true })
-                    .then(poll => res.json({ input: data, poll }))
-                    .catch(err => {
-                        res.statusCode = 500;
-                        res.json({ title: 'Error', message: err });
+                        console.log('Success!');
+                        res.json({ inputs: user.polls.id(pollId).inputs });
                     });
-            }
-        });
+                }
+            }).catch(err => {
+                res.statusCode = 500;
+                return res.json({ title: 'Error', message: err });
+            });;
     });
 
-    router.put('/polls/complete/:pollId', function(req, res) {
-        Poll.findOneAndUpdate({ _id: req.params.pollId }, { status: 'complete' })
-            .then(poll => res.json({ poll }))
-            .catch(err => {
+    router.put('/polls/complete/:creatorId', function(req, res) {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
+
+        User.findOne({ _id: req.params.creatorId })
+            .then(user => {
+                user.polls.id(req.body.pollId).status = 'complete';
+                user.save(function(err) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json({ poll: user.polls.id(req.body.pollId) });
+                });
+            }).catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
             });
     });
 
-    router.put('/inputs/reorder/:inputId', function(req, res) {
-        Option.findOneAndUpdate({ _id: req.params.inputId }, { order: req.body.order } { new: true })
-            .then(option => {
-                Poll.findOneAndUpdate({ _id: option.pollId }, {})
-                res.json({ poll })
+    router.put('/inputs/reorder/:creatorId', function(req, res) {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
+
+        User.findOne({ _id: req.params.creatorId })
+            .then(user => {
+                var inputs = user.polls.id(req.body.pollId).inputs;
+                req.body.options.forEach(option => {
+                    inputs.id(options.id).order = option.order;
+                });
+                user.save(function(err) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json({
+                        inputs: user.polls.id(req.body.pollId).inputs
+                    });
+                });
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -156,30 +210,55 @@ module.exports = function(app) {
             });
     });
 
-    router.delete('/inputs/delete/:inputId', function(req, res) {
-        Poll.findOneAndUpdate({ _id: req.params.pollId }, { $pull: { 'inputs': { 'text': req.body.text } } }, { new: true })
-            .then(poll => res.json({ poll }))
+    router.delete('/inputs/delete/:creatorId', function(req, res) {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
+
+        User.findOne({ _id: req.params.creatorId })
+            .then(user => {
+                user.polls.id(req.body.pollId).inputs.pull(req.body.optionId);
+                user.save(function(err) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json(user);
+                });
+            })
             .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
             });
     });
 
-    router.delete('/polls/delete/:pollId', function(req, res) {
-        Poll.remove({ _id: req.params.pollId }, function(err) {
-            if (err) {
+    router.delete('/polls/delete/:creatorId', function(req, res) {
+        let isAuth = req.body.isAuth;
+
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+        }
+        User.findOne({ _id: req.params.creatorId })
+            .then(user => {
+                user.polls.pull(req.body.pollId);
+                user.save(function(err) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json(user);
+                });
+            })
+            .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
-            } else {
-                User.findOneAndUpdate({ creatorId: req.body.createdBy }, { $pull: { 'polls': { '_id': req.params.pollId } } }, { new: true })
-                    .then(user => res.json({ message: "Success!", user }))
-                    .catch(err => {
-                        res.statusCode = 500;
-                        res.json({ title: 'Error', message: err });
-                    })
-            }
-
-        });
+            });
     });
 
     app.use('/api', router);
