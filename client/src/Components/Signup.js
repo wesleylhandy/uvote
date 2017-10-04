@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
-export default class Body extends Component {
+export default class Signup extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+        this.state={
             user: {}
         }
 
     }
     render() {
-        return (<div>Body</div>);
+        return (<button>Signup</button>);
     }
 }

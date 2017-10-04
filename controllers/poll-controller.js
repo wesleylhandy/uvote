@@ -92,7 +92,7 @@ module.exports = function(app) {
 
         let data = {
             title: req.body.title,
-            url: req.params.creatorId + '/' + encodeURIComponent(req.body.title),
+            url: req.params.creatorId + '/polls/single/' + encodeURIComponent(req.body.title),
         }
 
         User.findOne({ creatorId: req.params.creatorId })

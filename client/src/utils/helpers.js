@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export function login(user) {
+export function authUser(user) {
     return new Promise((resolve, reject) => {
         axios.post('/api/login', { user }).then(response => {
             resolve(response);
@@ -11,7 +11,7 @@ export function login(user) {
     });
 }
 
-export function logout(user) {
+export function unAuthUser(user) {
     return new Promise((resolve, reject) => {
         axios.post('/api/logout', { user }).then(response => {
             resolve(response);
@@ -21,7 +21,7 @@ export function logout(user) {
     });
 }
 
-export function signup(user) {
+export function newUser(user) {
     return new Promise((resolve, reject) => {
         axios.post('/api/signup', { user }).then(response => {
             resolve(response);
