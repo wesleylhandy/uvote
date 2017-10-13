@@ -7,7 +7,7 @@ const saltFactor = 10;
 const Schema = mongoose.Schema;
 
 // defining three schemas, Option will be child or Poll, Poll will be child of User - to create nesting of documents. Better for data manipulation and aggregation.
-const OptionSchema = new Schema({
+const InputSchema = new Schema({
     order: {
         type: Number,
         required: true,
@@ -34,7 +34,7 @@ const PollSchema = new Schema({
         type: String,
         required: true
     },
-    inputs: [OptionSchema],
+    inputs: [InputSchema],
     status: {
         type: String,
         default: 'incomplete'

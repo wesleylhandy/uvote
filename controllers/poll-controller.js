@@ -38,17 +38,18 @@ module.exports = function(app) {
 
     router.get('/polls/byUser/all/:creatorId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
-            .then(user => res.json(polls { user.polls }))
+            .then(user => res.json({polls:  user.polls }))
             .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
             });
     });
 
-    router.get('/polls/byUser/single/:creatorId/:pollId', function(req, res) {
+    router.get('/polls/byUser/single/:creatorId/:title', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                res.json({ poll: user.polls.id(req.params.pollId) });
+                var index = user.polls.indexOf({ title: data.title });
+                res.json({ poll: user.polls.toObject()[index] });
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -92,7 +93,7 @@ module.exports = function(app) {
 
         let data = {
             title: req.body.title,
-            url: req.params.creatorId + '/polls/single/' + encodeURIComponent(req.body.title),
+            url: '/polls/single/' + req.params.creatorId + '/' + encodeURIComponent(req.body.title),
         }
 
         User.findOne({ creatorId: req.params.creatorId })

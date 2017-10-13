@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import AllPolls from './Components/AllPolls';
+import SinglePoll from './Components/AllPolls';
 import UserPortal from './Components/UserPortal';
 //import Login from './Components/Login';
 //import Logout from './Components/Logout';
@@ -80,6 +81,7 @@ export default class App extends Component {
                 </ul>
                 <Route path="/login" component={Authentication}/>
                 <Route path="/polls" component={AllPolls}/>
+                <Route path="/polls/single/:id/:title" component={SinglePoll}/>
                 <PrivateRoute path="/portal" component={UserPortal}/>
             </nav>
         )
