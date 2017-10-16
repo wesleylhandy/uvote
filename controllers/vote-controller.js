@@ -6,15 +6,17 @@ module.exports = function(app) {
     router.post('/poll/inputs/vote/:creatorId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                user.polls.id(req.body.pollId).inputs.id(req.body.optionId).votes++;
+                var index = user.polls.indexOf({title: req.body.pollTitle});
+                user.polls[index].inputs.id(req.body.optionId).votes.$inc();
                 user.save(function(err) {
                     if (err) {
                         res.statusCode = 500;
                         return res.json({ title: 'Error', message: err });
                     }
                     console.log('Success!');
-                    res.json({ poll: user.polls.id(req.body.pollId).inputs.id(req.body.optionId) });
+                    res.json({message: 'success'});
                 });
+
             })
             .catch(err => {
                 res.statusCode = 500;

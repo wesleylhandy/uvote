@@ -5,7 +5,6 @@ const logger = require("morgan");
 const path = require('path');
 const assert = require('assert');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -27,15 +26,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
-//add cookie and session support
-app.use(cookieParser())
+//add session support
 app.set('trust proxy', 1) // trust first proxy
-
-//need sessions to persist state of user
+const month = 1000 * 60 * 60 * 24 * 31;
 app.use(session({
-    secret: '3or8h1o2h1o28u12o38j12',
+    secret: 'twentythree@#@#2323',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { maxAge: month }
 }));
 
 app.set('port', port);

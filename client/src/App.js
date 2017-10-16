@@ -13,7 +13,7 @@ import { authUser, unAuthUser, newUser } from './utils/helpers';
 
 //import io from 'socket.io-client';
 //const socket = io();
-let isAuth = false;
+let globalAuth = false;
 
 class Authentication extends Component {
     constructor(props){
@@ -27,34 +27,35 @@ class Authentication extends Component {
     }
 
     login = () => {
-
-        isAuth = true;
+        this.props.updateAuth(true);
         /* 
         authUser({username: this.state.username, password: this.state.password}).then(user => {
-            isAuth = true;
-            this.setState({ redirectToReferrer: true })
-        }).catch(err=> alert(err));
+            this.props.updateAuth(true);
+        }).catch(err=> alert(JSON.stringify(err, null, 2)));
         */
     }
 
     logout = () => {
-        isAuth = false;
+        this.props.updateAuth(false);
+        /*
+        unAuthUser().then(()=> this.props.updateAuth(false)).catch(err=> alert(JSON.stringify(err, null, 2)));
+        */
     }
 
     render() {
         const { from } = this.props.location.state || { from: { pathname: '/' } }
 
-        if (isAuth) {
-            return ( <Redirect to={ from }/>
-            )
-        }
-        const message = from.pathname === '/' ? `Please Click Here to ${isAuth ? 'Log out' : 'Log in'}` : `You must log in to view the page at ${from.pathname}`;
-        const text = isAuth ? 'Log out' : 'Log in';
+        // if (this.props.isAuth) {
+        //     return ( <Redirect to={ from }/>
+        //     )
+        // }
+        const message = from.pathname === '/' ? `Please Click Here to ${this.props.isAuth ? 'Log out' : 'Log in'}` : `You must log in to view the page at ${from.pathname}`;
+        const text = this.props.isAuth ? 'Log out' : 'Log in';
 
         return ( 
             <div>
                 <p>{ message }</p> 
-                <button onClick={ !isAuth ? this.login : this.logout }>{ text }</button> 
+                <button onClick={ !this.props.isAuth ? this.login : this.logout }>{ text }</button> 
             </div>
         )
     }
@@ -63,7 +64,7 @@ class Authentication extends Component {
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
-    isAuth ? (
+    globalAuth ? (
       <Component {...props}/>
     ) : (
       <Redirect to={{
@@ -74,12 +75,22 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   )}/>
 )
 
-
-
 export default class App extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            isAuth: false
+        }
+    }
+
+    updateAuth(bool) {
+        this.setState({isAuth: bool});
+        globalAuth = bool;
+    }
+
     renderLoginControl = () => {
-        if (isAuth) return <Link to='/logout'>Logout</Link>
+        if (this.state.isAuth) return <Link to='/logout'>Logout</Link>
         else return <Link to='/login'>Login</Link>
     }
 
@@ -92,8 +103,7 @@ export default class App extends Component {
                     <li><Link to="/polls">View All Polls</Link></li>
                     <li><Link to="/portal">Create Poll</Link></li>
                 </ul>
-                <Route path='/logout' component={Authentication}/>
-                <Route path="/login" component={Authentication}/>
+                <Route path='/log*' render={props=> <Authentication isAuth={this.state.isAuth} updateAuth={this.updateAuth.bind(this)} {...props}/>}/>
                 <Route path="/polls" component={AllPolls}/>
                 <Route path="/polls/single/:id/:title" component={SinglePoll}/>
                 <PrivateRoute path="/portal" component={UserPortal}/>

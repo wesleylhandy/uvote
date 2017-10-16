@@ -58,21 +58,19 @@ module.exports = function(app) {
     });
 
     router.get('/polls/all/', function(req, res) {
-        User.aggregate({
+        User.aggregate([{
                 $project: {
                     _id: 0,
                     username: 0,
-                    password: 0,
-                    creatorId: 1,
-                    polls: 1
-                },
-                { $unwind: '$polls' },
-                {
-                    $match: {
-                        'polls.status': 'complete'
-                    }
+                    password: 0
                 }
-            },
+            }, {
+                $unwind: '$polls'
+            },{
+                $match: {
+                    'polls.status': 'complete'
+                }
+            }],
             function(err, polls) {
                 if (err) {
                     res.statusCode = 500;
@@ -128,8 +126,8 @@ module.exports = function(app) {
         }
 
         let data = {
-            title = req.body.text,
-            order = req.body.order,
+            title : req.body.text,
+            order : req.body.order,
         }
 
         User.findOne({ creatorId: req.params.creatorId })
