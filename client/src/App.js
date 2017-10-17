@@ -12,23 +12,6 @@ import AllPolls from './Components/AllPolls';
 import SinglePoll from './Components/AllPolls';
 import UserPortal from './Components/UserPortal';
 
-//import io from 'socket.io-client';
-//const socket = io();
-// let globalAuth = false;
-
-// const PrivateRoute = ({ component: Component, ...rest }) => (
-//   <Route {...rest} render={props => (
-//     globalAuth ? (
-//       <Component {...props}/>
-//     ) : (
-//       <Redirect to={{
-//         pathname: '/login',
-//         state: { from: props.location }
-//       }}/>
-//     )
-//   )}/>
-// )
-
 export default class App extends Component {
 
     constructor(props) {
@@ -70,7 +53,7 @@ export default class App extends Component {
                 <main>
                     <div className="container">
                         <Route path="/polls" component={AllPolls}/>
-                        <Route path="/polls/single/:id/:title" component={SinglePoll}/>
+                        <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} {...props}/>}/>
                         <Route path="/portal" render={props=> <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
                     </div>
                 </main>

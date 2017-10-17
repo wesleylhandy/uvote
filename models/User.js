@@ -20,7 +20,8 @@ const InputSchema = new Schema({
     votes: {
         type: Number,
         default: 0
-    }
+    },
+    voters: [String]
 });
 
 const PollSchema = new Schema({

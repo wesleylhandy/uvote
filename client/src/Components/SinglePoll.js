@@ -10,6 +10,7 @@ export default class Poll extends Component {
             creatorId: props.match.params.id,
             title: props.match.params.title,
             poll: {},
+            userId: this.props.userId,
             hasVoted: false
         }
         this.renderInputs = this.renderInputs.bind(this);
@@ -25,7 +26,7 @@ export default class Poll extends Component {
         this.updatePollData();
     }
     renderInputs(poll) {
-        if (poll)
+        if (poll && !this.state.hasVoted)
             return (
                 <form>
                     {poll.inputs.map((input, index)=><input key={index} type='radio' value={input.title} name={input._id} disabled={this.state.hasVoted}/>)}
@@ -50,7 +51,7 @@ export default class Poll extends Component {
     }
     handleVote(e) {
         e.preventDefault();
-        vote(this.state.title, e.target.name, this.state.creatorId).then(res=>{
+        vote(this.state.title, e.target.name, this.state.creatorId, this.state.userId).then(res=>{
             this.setState({hasVoted:true});
             this.updatePollData();
         }).catch(err=>alert(err));

@@ -8,6 +8,7 @@ module.exports = function(app) {
             .then(user => {
                 var index = user.polls.indexOf({title: req.body.pollTitle});
                 user.polls[index].inputs.id(req.body.optionId).votes.$inc();
+                user.polls[index].inputs.id(req.body.optionId).voters.push(req.body.userId ? req.body.userId : 'anonymous');
                 user.save(function(err) {
                     if (err) {
                         res.statusCode = 500;

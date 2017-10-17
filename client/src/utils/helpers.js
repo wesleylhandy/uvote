@@ -165,9 +165,9 @@ export function deletePoll(pollId, creatorId, isAuth) {
     });
 }
 
-export function vote(pollTitle, optionId, creatorId) {
+export function vote(pollTitle, optionId, creatorId, userId) {
     return new Promise((resolve, reject) => {
-        axios.put(`/api/polls/inputs/vote/${creatorId}`, { pollTitle, optionId }).then(response => {
+        axios.put(`/api/polls/inputs/vote/${creatorId}`, { pollTitle, optionId, userId }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
