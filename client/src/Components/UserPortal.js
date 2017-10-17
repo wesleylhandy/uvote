@@ -15,10 +15,16 @@ export default class UserPortal extends Component {
             isAuth: '',
             searchTerm: ''
         }
+        this.handleInput.bind(this);
     }
     componentDidMount(){
         this.setState({userId: this.props.userId, isAuth: this.props.isAuth});
     }
+
+    handleInput(e) {
+        e.preventDefault();
+    }
+
     render() {
         if(this.props.userId && this.props.isAuth) {
             return (
@@ -31,7 +37,7 @@ export default class UserPortal extends Component {
                         <Link to={`/saved/${this.state.userId}`}><button className="option-view-complete">Saved Polls <i className="fa fa-lock" aria-hidden="true"></i></button></Link>
                         <div className="input-group">
                             <label htmlFor="search"><i className="fa fa-search" aria-hidden="true"></i></label>
-                            <input type="text" placeholder='term...' onChange={handleInput} value={this.state.searchTerm}/>
+                            <input type="text" placeholder='term...' onChange={this.handleInput} value={this.state.searchTerm}/>
                             <button className="search-all">Search</button>
                         </div>
                     </div>
