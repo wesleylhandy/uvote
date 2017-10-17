@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal';
 import {Redirect} from 'react-router-dom';
-import { newUser } from '../utils/helpers';
+import { authUser } from '../utils/helpers';
 
 const customStyles = {
     content : {
@@ -14,8 +14,8 @@ const customStyles = {
     }
 };
 
-export default class SignUp extends Component {
-    constructor(props) {
+export default class Authentication extends Component {
+    constructor(props){
         super(props);
         this.state = {
             username_field: {
@@ -32,10 +32,10 @@ export default class SignUp extends Component {
             },
             dots: '',
             modalIsOpen: true,
-            isAuth: false
+            isAuth: null
         }
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInput = this.handleInput.bind(this);
+        this.login = this.login.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
 
@@ -43,79 +43,58 @@ export default class SignUp extends Component {
         this.setState({modalIsOpen: false});
     }
 
+    login = (e) => {
+        e.preventDefault();
+        let isValid = true;
+        if(!this.state.username_field.value.trim()) {
+            isValid = false;
+            this.setState({username_field: {
+                error_label: '*',
+                value: '',
+                status: 'error',
+                validation: 'Please enter your email address.'
+            }}); 
+        }
+        if(!this.state.password_field.value.trim()) {
+            isValid = false;
+            this.setState({password_field: {
+                error_label: '*',
+                value: '',
+                status: 'error',
+                validation: 'Please enter your password.'
+            }}); 
+        }
+        if(isValid) {
+            authUser(this.state.username_field.value, this.state.password_field.value).then(user => {
+                this.props.updateAuth(true, user.creatorId);
+                this.setState({
+                    username_field: 
+                        {error_label: '', status: 'valid', validation: '', value: ''},
+                    password_field: 
+                        {error_label: '', status: 'valid', validation: '', value: ''},
+                    isAuth: true
+                });
+            }).catch(err=> {this.setState({
+                username_field: 
+                    {error_label: '*', status: 'error', validation: JSON.stringify(err, null, 2), value: ''}, 
+                password_field: 
+                    {label: '*', status: 'error', validation: '', value: ''}
+                })
+            });
+        }
+    }
+
     handleInput(e) {
         e.preventDefault();
         if (e.target.name === 'password') {
-            
             this.setState({password_field: {value: this.state.password_field.value + e.target.value.slice(-1), error_label: '', validation: '', status: 'valid'}});
             let dots ='';
             for(let i = 0; i < e.target.value.length; i++) {
                 dots += '•'
             }
             this.setState({dots});
-
         }
         else this.setState({username_field: {value: e.target.value, error_label: '', validation: '', status: 'valid'}})
-    }
-
-    isValidEmail(username) {
-        return (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(username);
-    }
-    isValidPassword(password) {
-        return (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$/).test(password);
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        let isValid = true;
-        if (!this.isValidEmail(this.state.username_field.value)) {
-            this.setState({username_field: {
-                error_label: '*',
-                value: '',
-                status: 'error',
-                validation: 'Please enter a valid email address'
-            }}) 
-            
-            isValid = false;
-        }
-        if (!this.isValidPassword(this.state.password_field.value)) { 
-            this.setState({password_field: {
-                error_label: '*',
-                value: '',
-                status: 'error',
-                validation: 'Password must be at least 8 characters in length include at least 1 lowercase letter, 1 capital letter, 1 number and 1 special character (ie. #?!@$%^&*-_).'
-            }}) 
-            
-            isValid = false;
-        }
-        if(isValid) {
-            newUser({username: this.state.username_field.value, password: this.state.password_field.value}).then(user=> {
-                this.props.updateAuth(true, user.creatorId);
-            }).catch(err=> {
-                switch(err.title) {
-                    case 'Insecure Password':
-                        this.setState({password_field: {
-                            error_label: '*',
-                            value: '',
-                            status: 'error',
-                            validation: err.title + ': ' + err.message
-                        }});
-                        break;
-                    case 'Duplicate Username':
-                    case 'Invalid Username':
-                        this.setState({username_field: {
-                            error_label: '*',
-                            value: '',
-                            status: 'error',
-                            validation: err.title + ': ' + err.message
-                        }});
-                        break;
-                    default: 
-                        alert(JSON.stringify(err, null, 2));
-                        break;
-                }
-            });
-        }
     }
 
     componentDidMount() {
@@ -123,6 +102,9 @@ export default class SignUp extends Component {
     }
 
     render() {
+
+        const { from } = this.props.location.state || { from: { pathname: '/' } }
+        const message = from.pathname === '/' ? `'Enter your email address and password'}` : `You must log in to view the page at ${from.pathname}`;
         const redirect = () => {
             if(this.state.isAuth) {return <Redirect to='/portal'/>}
             else if (!this.state.modalIsOpen) {return <Redirect to='/'/>}
@@ -134,8 +116,8 @@ export default class SignUp extends Component {
                     onRequestClose={this.closeModal}
                     style={customStyles}
                 >
-                    <p>Please Choose a Username and Password</p> 
-                    <form onSubmit={this.handleSubmit} className='auth-form'>
+                    <p>{ message }</p>
+                    <form onSubmit={this.login} className={this.props.isAuth ? 'auth-form hidden' : 'auth-form'}>
                         <div className='form-group'>
                             <div className={this.state.username_field.status !== 'error' ? 'validation hidden' : 'validation'} required>{this.state.username_field.validation}</div>
                             <div className='required'>{this.state.username_field.error_label}</div>
@@ -148,12 +130,11 @@ export default class SignUp extends Component {
                             <label htmlFor="password"><i className="fa fa-key" aria-hidden="true"></i></label>
                             <input type='text' name='password' placeholder='ex: abc123D$' value={this.state.dots} onChange={this.handleInput}/>
                         </div>
-                        <button onClick={ this.handleSubmit }>Sign Up</button> 
-                    </form>
+                        <button onClick={ this.login }>Log In</button> 
+                    </form> 
                 </Modal>
                 {redirect()}
             </section>
         )
     }
-    
 }

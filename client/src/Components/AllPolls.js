@@ -13,7 +13,6 @@ export default class AllPolls extends Component {
 
     componentDidMount() {
         getAllUsersPolls().then(res => {
-            console.log(res.polls);
             this.setState({polls: res.polls})
         }).catch(err=> alert(JSON.stringify(err, null, 2)));
     }
@@ -30,7 +29,7 @@ export default class AllPolls extends Component {
     }
 
     render() {
-        return ( <div>{this.renderPolls(this.state.polls)}</div> );
+        return ( <section className='polls-list-section'>{this.renderPolls(this.state.polls)}</section> );
         
     }
 }
