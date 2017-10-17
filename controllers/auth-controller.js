@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
+const shortid = require('shortid');
 const middleware = require('./../config/middleware');
 const User = require('../models/User');
 
@@ -49,7 +50,7 @@ module.exports = function(app) {
 
     });
 
-    router.get('/logout', function(req, res) {
+    router.post('/logout', function(req, res) {
         req.logout();
         res.send({ message: 'Logged Out' });
     });

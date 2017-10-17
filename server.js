@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const logger = require("morgan");
 const path = require('path');
 const assert = require('assert');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
@@ -29,6 +30,7 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 //add session support
 app.set('trust proxy', 1) // trust first proxy
 const month = 1000 * 60 * 60 * 24 * 31;
+app.use(cookieParser());
 app.use(session({
     secret: 'twentythree@#@#2323',
     resave: false,
@@ -44,11 +46,11 @@ var uri = 'mongodb://' + process.env.MLAB_USER + ':' + process.env.MLAB_PASS + '
 //connect to mongodb//set controllers and sockets here to have access to DB
 mongoose.connect(uri, { useMongoClient: true }).then(() => console.log('connected to DB!')).catch(err => console.log(err));
 
-//set up passport for user authentication
-const passportConfig = require('./config/passport');
-
 app.use(passport.initialize());
 app.use(passport.session());
+
+//set up passport for user authentication
+const passportConfig = require('./config/passport');
 
 require("./controllers/auth-controller.js")(app);
 require("./controllers/poll-controller.js")(app);

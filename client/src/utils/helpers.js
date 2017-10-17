@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-export function authUser(user) {
+export function authUser(username, password) {
     return new Promise((resolve, reject) => {
-        axios.post('/api/login', { user }).then(response => {
+        axios.post('/api/login', { username, password }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
@@ -12,9 +12,9 @@ export function authUser(user) {
     });
 }
 
-export function unAuthUser(user) {
+export function unAuthUser() {
     return new Promise((resolve, reject) => {
-        axios.post('/api/logout', { user }).then(response => {
+        axios.post('/api/logout').then(response => {
             resolve(response.data);
         }).catch(err => {
             reject(err);
@@ -24,7 +24,7 @@ export function unAuthUser(user) {
 
 export function newUser(user) {
     return new Promise((resolve, reject) => {
-        axios.post('/api/signup', { user }).then(response => {
+        axios.post('/api/signup', { username: user.username, password: user.password }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);

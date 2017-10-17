@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const passportLocalMongoose = require('passport-local-mongoose');
-const shortid = require('shortid');
 
 const saltFactor = 10;
 const Schema = mongoose.Schema;
@@ -68,16 +67,13 @@ UserSchema.plugin(passportLocalMongoose);
 // Pre-save of user to database, hash password if password is modified or new
 UserSchema.pre('save', function(next) {
     const user = this;
-    if (!user.isModified('password'))
-        return next();
+    if (!user.isModified('password')) return next();
 
     bcrypt.genSalt(saltFactor, function(err, salt) {
-        if (err)
-            return next(err);
+        if (err) return next(err);
 
         bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err)
-                return next(err);
+            if (err) return next(err);
             user.password = hash;
             next();
         })
@@ -86,8 +82,7 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.method('comparePassword', function(candidatePassword, dbPassword, cb) {
     bcrypt.compare(candidatePassword, dbPassword, function(err, isMatch) {
-        if (err)
-            return cb(err);
+        if (err) return cb(err);
         cb(null, isMatch);
     });
 });
