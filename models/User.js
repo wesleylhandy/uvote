@@ -9,14 +9,9 @@ const Schema = mongoose.Schema;
 const InputSchema = new Schema({
     order: {
         type: Number,
-        required: true,
         default: 0
     },
-    title: {
-        type: String,
-        required: true,
-        unique: true
-    },
+    title: String,
     votes: {
         type: Number,
         default: 0
@@ -27,13 +22,9 @@ const InputSchema = new Schema({
 const PollSchema = new Schema({
     title: {
         type: String,
-        required: true,
         unique: true
     },
-    url: {
-        type: String,
-        required: true
-    },
+    url: String,
     inputs: [InputSchema],
     status: {
         type: String,

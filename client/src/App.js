@@ -11,6 +11,11 @@ import SignUp from './Components/Signup';
 import AllPolls from './Components/AllPolls';
 import SinglePoll from './Components/AllPolls';
 import UserPortal from './Components/UserPortal';
+import PollEditor from './Components/PollEditor';
+import AllUserPolls from './Components/AllUserPolls';
+import UserIncompletePolls from './Components/UserIncompletePolls';
+import UserCompletePolls from './Components/UserCompletePolls';
+import SearchPolls from './Components/SearchPolls';
 
 export default class App extends Component {
 
@@ -52,9 +57,14 @@ export default class App extends Component {
                 </header>
                 <main>
                     <div className="container">
-                        <Route path="/polls" component={AllPolls}/>
+                        <Route exact path="/polls" component={AllPolls}/>
                         <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} {...props}/>}/>
-                        <Route path="/portal" render={props=> <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Route exact path="/portal" render={props=> <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Route exact path='/create/new' render={props => <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} pollData={'none'} {...props}/>}/>
+                        <Route exact path='/all/my' render={props => <AllUserPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Route exact path='/incomplete/my' render={props => <UserIncompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Route exact path='/complete/my' render={props => <UserCompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Route exact path='/search/:userId/:terms' render={props => <SearchPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
                     </div>
                 </main>
                 <footer>

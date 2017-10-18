@@ -86,36 +86,63 @@ module.exports = function(app) {
 
         if (isAuth == false) {
             res.statusCode = 401;
-            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to create a new poll.' });
         }
 
-        let data = {
-            title: req.body.title,
-            url: '/polls/single/' + req.params.creatorId + '/' + encodeURIComponent(req.body.title),
-        }
+        // let data = {
+        //     title: req.body.title,
+        //     url: '/polls/single/' + req.params.creatorId + '/' + encodeURIComponent(req.body.title),
+        // }
 
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var index = user.polls.indexOf({ title: data.title });
-                if (index >= 0) {
-                    res.statusCode = 409;
-                    res.send({ title: 'Error', message: 'Please choose a different title.' })
-                } else {
-                    user.polls.push(data);
-                    user.save(function(err) {
-                        if (err) {
-                            res.statusCode = 500;
-                            return res.json({ title: 'Error', message: err });
-                        }
-                        console.log('Success!');
-                        res.json({ polls: user.polls });
-                    });
-                }
+                const poll = user.polls.create({});
+                user.polls.push(poll);
+                user.save(function(err, data) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json({ poll: poll});
+                });
             }).catch(err => {
                 res.statusCode = 500;
                 return res.json({ title: 'Error', message: err });
             });
     });
+
+    router.put('/polls/title/add/:creatorId', function(req, res){
+        let isAuth = req.body.isAuth;
+        
+        if (isAuth == false) {
+            res.statusCode = 401;
+            return res.json({ title: "Unauthorized Request", message: 'You must be logged in to create a new poll.' });
+        }
+
+        let title = req.body.title,
+            url = '/polls/single/' + req.params.creatorId + '/' + encodeURIComponent(req.body.title);
+        
+        User.findOne({ creatorId: req.params.creatorId })
+            .then(user => {
+                const poll = user.polls.id(req.body.pollId);
+                poll.title = title;
+                poll.url = url;
+                console.log(poll);
+                user.save(function(err, data) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json({ poll: data.polls.id(req.body.pollId)});
+                });
+            })
+            .catch(err => {
+                res.statusCode = 500;
+                return res.json({ title: 'Error', message: err });
+            });
+    })
 
     router.post('/polls/inputs/add/:creatorId', function(req, res) {
         let isAuth = req.body.isAuth;
@@ -126,8 +153,8 @@ module.exports = function(app) {
         }
 
         let data = {
-            title : req.body.text,
-            order : req.body.order,
+            title : req.body.option.title,
+            order : req.body.option.order,
         }
 
         User.findOne({ creatorId: req.params.creatorId })
@@ -217,15 +244,15 @@ module.exports = function(app) {
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
 
-        User.findOne({ _id: req.params.creatorId })
+        User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                user.polls.id(req.body.pollId).inputs.pull(req.body.optionId);
+                user.polls.id(req.body.pollId).inputs.pull({_id: req.body.optionId});
                 user.save(function(err) {
                     if (err) {
                         res.statusCode = 500;
                         return res.json({ title: 'Error', message: err });
                     }
-                    console.log('Success!');
+                    console.log('Successfully Deleted Option!');
                     res.json(user);
                 });
             })
@@ -242,15 +269,15 @@ module.exports = function(app) {
             res.statusCode = 401;
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
-        User.findOne({ _id: req.params.creatorId })
+        User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                user.polls.pull(req.body.pollId);
+                user.polls.pull({_id: req.body.pollId});
                 user.save(function(err) {
                     if (err) {
                         res.statusCode = 500;
                         return res.json({ title: 'Error', message: err });
                     }
-                    console.log('Success!');
+                    console.log('Successfully Deleted Poll!');
                     res.json(user);
                 });
             })

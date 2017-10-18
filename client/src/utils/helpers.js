@@ -96,10 +96,10 @@ export function getSinglePoll(id, title) {
     });
 }
 
-export function createPoll(creatorId, title, isAuth) {
+export function createPoll(creatorId, isAuth) {
     return new Promise((resolve, reject) => {
 
-        axios.post(`/api/polls/add/${creatorId}`, { title, isAuth }).then(response => {
+        axios.post(`/api/polls/add/${creatorId}`, { isAuth }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
@@ -109,9 +109,20 @@ export function createPoll(creatorId, title, isAuth) {
     })
 }
 
-export function addOption(creatorId, pollId, order, text, isAuth) {
+export function addTitle(creatorId, pollId, title, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.post(`/api/polls/inputs/add/${creatorId}`, { pollId, order, text, isAuth }).then(response => {
+        axios.put(`/api/polls/title/add/${creatorId}`, { pollId, title, isAuth }).then(response => {
+            resolve(response.data);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+    })
+}
+
+export function addOption(creatorId, pollId, option, isAuth) {
+    return new Promise((resolve, reject) => {
+        axios.post(`/api/polls/inputs/add/${creatorId}`, { pollId, option, isAuth }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
