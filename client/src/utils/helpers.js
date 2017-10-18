@@ -142,6 +142,7 @@ export function savePoll(creatorId, pollId, isAuth) {
     })
 }
 
+// change option order may be implemented in the future to allow rearranging of input order once input is saved
 export function changeOptionOrder(creatorId, pollId, options, isAuth) {
     return new Promise((resolve, reject) => {
         axios.put(`/api/polls/inputs/reorder/${creatorId}`, { pollId, options, isAuth }).then(response => {
@@ -153,10 +154,9 @@ export function changeOptionOrder(creatorId, pollId, options, isAuth) {
     })
 }
 
-
 export function deleteOption(creatorId, pollId, optionId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.put(`/api/polls/inputs/delete/${creatorId}`, { pollId, optionId, isAuth }).then(response => {
+        axios.delete(`/api/polls/inputs/delete/${creatorId}`, { pollId, optionId, isAuth }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);

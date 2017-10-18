@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
+mongoose.set('debug', true);
 require('dotenv').config();
 
 // set Mongoose promises to es6 promises

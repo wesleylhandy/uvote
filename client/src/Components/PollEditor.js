@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { createPoll, deletePoll, addTitle } from '../utils/helpers';
-//, addOption, savePoll, changeOptionOrder, deleteOption, 
+import { createPoll, deletePoll, addTitle, addOption, deleteOption } from '../utils/helpers';
+//, , savePoll,  , 
 
 const dummyOptions = {
     0: 'Captain Kirk',
@@ -31,6 +31,7 @@ export default class PollEditor extends Component {
         this.state = {
             userId: this.props.userId,
             title: '',
+            titleSaved: false,
             isAuth: this.props.isAuth,
             options: [],
             pollId: ''
@@ -41,30 +42,33 @@ export default class PollEditor extends Component {
         this.handleOptionSave = this.handleOptionSave.bind(this);
         this.handleDeleteOption = this.handleDeleteOption.bind(this);
         this.handleInput = this.handleInput.bind(this);
+        this.handleClear = this.handleClear.bind(this);
     }
 
     /*** SPECIFIC EVENT HANDLERS ***/
     // TITLE
     handleTitleSave(e) {
         e.preventDefault();
-        console.log({pollId: this.state.pollId});
+
         addTitle(this.state.userId, this.state.pollId, this.state.title, this.state.isAuth)
-        .then(success=>console.log('Title Saved'))
-        .catch(err=>console.error(err));
+            .then(success=>{console.log('Title Saved'); this.setState({titleSaved: true})})
+            .catch(err=>console.error(err));
     }
 
     handleDeletePoll(e) {
         e.preventDefault();
+
         deletePoll(this.state.pollId, this.state.userId, this.state.isAuth)
-        .then(success=>console.log('Poll Deleted'))
-        .catch(err=>console.error(err));
+            .then(success=>console.log('Poll Deleted'))
+            .catch(err=>console.error(err));
     }
 
     //OPTIONS
     addOptionInput(e){
         e.preventDefault();
+        
         const option = {
-            order: this.state.options.length,
+            order: this.state.options.length ? this.state.options[this.state.options.length - 1].order + 1 : 0,
             title: ''
         }
         const arr = this.state.options.slice();
@@ -73,10 +77,38 @@ export default class PollEditor extends Component {
     }
     handleOptionSave(e){
         e.preventDefault();
+        
+        const options = this.state.options;
+        const option = options[e.target.name];
+        console.dir({name: e.target.name, option})
+        addOption(this.state.userId, this.state.pollId, option, this.state.isAuth)
+            .then(res=>{
+                options[e.target.name]._id = res.input._id; 
+                this.setState({options: options})
+            })
+            .catch(err=>console.error(err));
     }
 
     handleDeleteOption(e) {
         e.preventDefault();
+        //console.dir(e.target);
+        const options = this.state.options;
+        // the following regex will return false if e.target.name is a integer or string of real numbers
+        //console.log({name: e.target.parentNode.name, test: (/([^0-9])+/igm).test(e.target.name)})
+        if (!(/([^0-9])+/igm).test(e.target.parentNode.name))  {
+            options.splice(parseInt(e.target.parentNode.name, 10), 1);
+            this.setState({options: options});
+        } else {
+            deleteOption(this.state.userId, this.state.pollId, e.target.parentNode.name, this.state.isAuth)
+                .then(success=>{
+                    const index = options.findIndex(function(option){ return option._id === e.target.name});
+                    if (index > -1) {
+                        options.splice(index, 1);
+                        this.setState({options: options});
+                    }
+                })
+                .catch(err=>console.error(err));
+        }
     }
 
     /*** GENERAL EVENT HANDLERS ***/
@@ -93,7 +125,16 @@ export default class PollEditor extends Component {
 
     handleClear(e){
         e.preventDefault();
+        if (e.target.name === 'title') {
+            this.setState({title: ''});
+        } else {
+            const options = this.state.options;
+            options[e.target.name].title = '';
+            this.setState({options: options});
+        }
     }
+
+    /*** LIFECYCLE EVENTS ***/
 
     componentDidMount() {
         if (this.props.pollData !== 'none') {
@@ -105,8 +146,8 @@ export default class PollEditor extends Component {
         }
         if (this.props.pollData==='none') {
             createPoll(this.props.userId, this.props.isAuth)
-            .then(res=>this.setState({pollId: res.poll._id}))
-            .catch(err=>console.error(err));
+                .then(res=>this.setState({pollId: res.poll._id}))
+                .catch(err=>console.error(err));
         }
     }
     renderOptions(inputs) {
@@ -116,11 +157,18 @@ export default class PollEditor extends Component {
                 { inputs.map((input, index)=>{
                         return (
                             <div className="option-input-group" key={index}>
-                                <label htmlFor={input._id || input.order}>Order {parseInt(input.order, 10) + 1}</label>
-                                <input type='text' value={input.title} name={input._id || input.order} onChange={this.handleInput} placeholder={index < 17 || index !== 25 ? dummyOptions[index] : 'I give in, just keep adding as many as you like'}/>
-                                <button onClick={this.handleOptionSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                                <button onClick={this.handleClear}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
-                                <button onClick={this.handleDeleteOption}>Delete <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <label htmlFor={input._id || index}>Order {index + 1}</label>
+                                <input 
+                                    type='text' 
+                                    value={input.title} 
+                                    name={input._id || index} 
+                                    onChange={this.handleInput} 
+                                    placeholder={index < 17 || index === 25 ? dummyOptions[index] : 'I give in, just keep adding as many as you like'}
+                                    disabled={input._id ? true : false}
+                                />
+                                <button className={input._id ? 'hidden' : ''} onClick={this.handleOptionSave} name={input._id || index}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                <button className={input._id ? 'hidden' : ''} onClick={this.handleClear} name={input._id || index}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
+                                <button onClick={this.handleDeleteOption} name={input._id ? input._id : index}>Delete <i className="fa fa-trash-o" aria-hidden="true"></i></button>
                             </div>
                         )
                   })
@@ -136,9 +184,16 @@ export default class PollEditor extends Component {
                 <div className='poll-editor'>
                     <div className="title-input-group">
                         <label htmlFor="title">Title <i className="fa fa-question" aria-hidden="true"></i></label>
-                        <input type="text" value={this.state.title} name='title' placeholder='Who do you want to be your captain?' onChange={this.handleInput}/>
-                        <button onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                        <button onClick={this.handleClear}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
+                        <input 
+                            type="text" 
+                            value={this.state.title} 
+                            name='title' 
+                            placeholder='Who do you want to be your captain?' 
+                            onChange={this.handleInput} 
+                            disabled={this.state.titleSaved ? true : false}
+                        />
+                        <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                        <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleClear} name='title'>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
                         <button onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
                     </div>
                     <div className="option-inputs">

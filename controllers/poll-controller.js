@@ -125,18 +125,23 @@ module.exports = function(app) {
         
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                const poll = user.polls.id(req.body.pollId);
-                poll.title = title;
-                poll.url = url;
-                console.log(poll);
-                user.save(function(err, data) {
-                    if (err) {
-                        res.statusCode = 500;
-                        return res.json({ title: 'Error', message: err });
-                    }
-                    console.log('Success!');
-                    res.json({ poll: data.polls.id(req.body.pollId)});
-                });
+                const index = user.polls.indexOf({ title: title });
+                if (index >= 0) {
+                    res.statusCode = 409;
+                    res.send({ title: 'Error', message: 'Poll Titles Must Be Unique.' });
+                } else {
+                    const poll = user.polls.id(req.body.pollId);
+                    poll.title = title;
+                    poll.url = url;
+                    user.save(function(err, data) {
+                        if (err) {
+                            res.statusCode = 500;
+                            return res.json({ title: 'Error', message: err });
+                        }
+                        console.log('Success!');
+                        res.json({ poll: data.polls.id(req.body.pollId)});
+                    });
+                }
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -152,28 +157,23 @@ module.exports = function(app) {
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
 
-        let data = {
-            title : req.body.option.title,
-            order : req.body.option.order,
-        }
+        let title = req.body.option.title,
+            order = req.body.option.order,
+            voters= [];
 
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var index = user.polls.id(data.pollId).inputs.indexOf({ title: data.title });
-                if (index >= 0) {
-                    res.statusCode = 409;
-                    res.send({ title: 'Error', message: 'Duplicate Entry Error.' });
-                } else {
-                    user.polls.id(pollId).inputs.push(data);
-                    user.save(function(err) {
-                        if (err) {
-                            res.statusCode = 500;
-                            return res.json({ title: 'Error', message: err });
-                        }
-                        console.log('Success!');
-                        res.json({ inputs: user.polls.id(pollId).inputs });
-                    });
-                }
+                const input = {order, title, voters};
+                console.log({input});
+                user.polls.id(req.body.pollId).inputs.push(input);
+                user.save(function(err, data) {
+                    if (err) {
+                        res.statusCode = 500;
+                        return res.json({ title: 'Error', message: err });
+                    }
+                    console.log('Success!');
+                    res.json({ input: input });
+                });
             }).catch(err => {
                 res.statusCode = 500;
                 return res.json({ title: 'Error', message: err });
