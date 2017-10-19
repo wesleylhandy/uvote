@@ -166,17 +166,18 @@ module.exports = function(app) {
                 const input = {order, title, voters};
                 console.log({input});
                 user.polls.id(req.body.pollId).inputs.push(input);
+                user.markModified('polls');
                 user.save(function(err, data) {
                     if (err) {
                         res.statusCode = 500;
-                        return res.json({ title: 'Error', message: err });
+                        return res.json({ title: 'Save Error', message: err });
                     }
                     console.log('Success!');
                     res.json({ input: input });
                 });
             }).catch(err => {
                 res.statusCode = 500;
-                return res.json({ title: 'Error', message: err });
+                return res.json({ title: 'DB Error', message: err });
             });;
     });
 
@@ -188,20 +189,22 @@ module.exports = function(app) {
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
 
-        User.findOne({ _id: req.params.creatorId })
+        User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                user.polls.id(req.body.pollId).status = 'complete';
+                const poll = user.polls.id(req.body.pollId);
+                poll.status = 'complete';
+                user.markModified('polls');
                 user.save(function(err) {
                     if (err) {
                         res.statusCode = 500;
-                        return res.json({ title: 'Error', message: err });
+                        return res.json({ title: 'Save Error', message: err });
                     }
                     console.log('Success!');
                     res.json({ poll: user.polls.id(req.body.pollId) });
                 });
             }).catch(err => {
                 res.statusCode = 500;
-                res.json({ title: 'Error', message: err });
+                res.json({ title: 'DB Error', message: err });
             });
     });
 

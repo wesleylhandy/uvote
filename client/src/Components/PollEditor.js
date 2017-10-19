@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { createPoll, deletePoll, addTitle, addOption, deleteOption } from '../utils/helpers';
-//, , savePoll,  , 
+import { createPoll, deletePoll, savePoll, addTitle, addOption, deleteOption } from '../utils/helpers';
 
 const dummyOptions = {
     0: 'Captain Kirk',
@@ -38,6 +37,7 @@ export default class PollEditor extends Component {
         }
         this.handleTitleSave = this.handleTitleSave.bind(this);
         this.handleDeletePoll = this.handleDeletePoll.bind(this);
+        this.handleSavePoll = this.handleSavePoll.bind(this);
         this.addOptionInput = this.addOptionInput.bind(this);
         this.handleOptionSave = this.handleOptionSave.bind(this);
         this.handleDeleteOption = this.handleDeleteOption.bind(this);
@@ -59,7 +59,15 @@ export default class PollEditor extends Component {
         e.preventDefault();
 
         deletePoll(this.state.pollId, this.state.userId, this.state.isAuth)
-            .then(success=>console.log('Poll Deleted'))
+            .then(success=>console.log('Poll Deleted')) //redirect somewhere...
+            .catch(err=>console.error(err));
+    }
+
+    handleSavePoll(e) {
+        e.preventDefault()
+
+        savePoll(this.state.userId, this.state.pollId, this.state.isAuth)
+            .then(success=> console.log('Poll Saved')) //redirect somewhere
             .catch(err=>console.error(err));
     }
 
@@ -77,16 +85,21 @@ export default class PollEditor extends Component {
     }
     handleOptionSave(e){
         e.preventDefault();
-        
+
+        const index = e.target.name;
         const options = this.state.options;
-        const option = options[e.target.name];
-        console.dir({name: e.target.name, option})
-        addOption(this.state.userId, this.state.pollId, option, this.state.isAuth)
-            .then(res=>{
-                options[e.target.name]._id = res.input._id; 
-                this.setState({options: options})
-            })
-            .catch(err=>console.error(err));
+        const option = options[index];
+
+        if(option.title.trim()) {
+        
+            addOption(this.state.userId, this.state.pollId, option, this.state.isAuth)
+                .then(res=>{
+                    options[index].saved = true; 
+                    this.setState({options: options});
+                    console.log('Option Saved');
+                })
+                .catch(err=>console.error(err));
+        } else {alert("Please Enter A Term or Phrase Before Saving.")}
     }
 
     handleDeleteOption(e) {
@@ -157,18 +170,18 @@ export default class PollEditor extends Component {
                 { inputs.map((input, index)=>{
                         return (
                             <div className="option-input-group" key={index}>
-                                <label htmlFor={input._id || index}>Order {index + 1}</label>
+                                <label htmlFor={input.saved ? "saved" + index : index}>Order {index + 1}</label>
                                 <input 
                                     type='text' 
                                     value={input.title} 
-                                    name={input._id || index} 
+                                    name={input.saved ? "saved" + index : index} 
                                     onChange={this.handleInput} 
                                     placeholder={index < 17 || index === 25 ? dummyOptions[index] : 'I give in, just keep adding as many as you like'}
-                                    disabled={input._id ? true : false}
+                                    disabled={input.saved ? true : false}
                                 />
-                                <button className={input._id ? 'hidden' : ''} onClick={this.handleOptionSave} name={input._id || index}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                                <button className={input._id ? 'hidden' : ''} onClick={this.handleClear} name={input._id || index}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
-                                <button onClick={this.handleDeleteOption} name={input._id ? input._id : index}>Delete <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button className={input.saved ? 'hidden' : ''} onClick={this.handleOptionSave} name={input.saved ? "saved" + index : index}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                <button className={input.saved ? 'hidden' : ''} onClick={this.handleClear} name={input.saved ? "saved" + index : index}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
+                                <button onClick={this.handleDeleteOption} name={input.saved ? "saved"  + index : index}>Delete <i className="fa fa-trash-o" aria-hidden="true"></i></button>
                             </div>
                         )
                   })
@@ -176,6 +189,15 @@ export default class PollEditor extends Component {
                 </div>
             )
         }
+    }
+
+    renderSaveButton(options){
+        let len = 0;
+        for(let i=0; i < options.length; i++) {
+            if (options[i].saved) len ++
+            if(len > 1) return <button onClick={this.handleSavePoll}>Save Poll <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+        }
+        return        
     }
 
     render() {
@@ -194,11 +216,15 @@ export default class PollEditor extends Component {
                         />
                         <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
                         <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleClear} name='title'>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
-                        <button onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                        
                     </div>
                     <div className="option-inputs">
                         {this.renderOptions(this.state.options)}
-                        <button onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                        <div className="poll-controls">
+                            <button onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                            {this.renderSaveButton(this.state.options)}
+                            <button onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                        </div>
                     </div>
                 </div>
             )
