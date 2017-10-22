@@ -21,7 +21,9 @@ export default class AllPolls extends Component {
         if(polls && polls.length) return (
                 <ul>
                     {
-                        polls.map((poll, index)=> <li key={index}><Link to={poll.url}>{poll.title}</Link></li> )
+                        polls.map((poll, index)=> {
+                            return <li key={index}><Link to={poll.polls.url}>{poll.polls.title}</Link></li>
+                        })
                     }
                 </ul>
             )

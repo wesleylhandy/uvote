@@ -1,5 +1,16 @@
 import axios from 'axios';
 
+export function getSession(){
+    return new Promise((resolve, reject)=> {
+        axios.get('/api/session').then(response => {
+            resolve(response.data);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+    });
+}
+
 
 export function authUser(username, password) {
     return new Promise((resolve, reject) => {
@@ -22,9 +33,10 @@ export function unAuthUser() {
     });
 }
 
-export function newUser(user) {
+export function newUser(newUser) {
     return new Promise((resolve, reject) => {
-        axios.post('/api/signup', { username: user.username, password: user.password }).then(response => {
+        console.log(newUser);
+        axios.post('/api/signup', { newUser }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);

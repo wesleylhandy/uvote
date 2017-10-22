@@ -4,13 +4,13 @@ const User = require('./../models/User');
 
 passport.serializeUser(function(user, done){
   // console.log('serializeUser');
-  done(null, user);
+  done(null, user.creatorId);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function(id, done) {
   // console.log('deserializeUser');
-  User.findById(user._id, function(err, user) {
-    done(null, user);
+  User.findOne({creatorId: id}, function(err, user) {
+    done(null, user.creatorId);
   });
 });
 

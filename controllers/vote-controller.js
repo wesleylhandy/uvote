@@ -3,13 +3,24 @@ const User = require('../models/User');
 
 module.exports = function(app) {
 
-    router.post('/poll/inputs/vote/:creatorId', function(req, res) {
+    router.put('/polls/inputs/vote/:creatorId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var index = user.polls.indexOf({title: req.body.pollTitle});
-                user.polls[index].inputs.id(req.body.optionId).votes.$inc();
-                user.polls[index].inputs.id(req.body.optionId).voters.push(req.body.userId ? req.body.userId : 'anonymous');
-                user.save(function(err) {
+                let filtered = user.polls.filter(function (poll) {
+                    return poll.title === decodeURIComponent(req.body.pollTitle);
+                });
+
+                let _id = filtered[0]._id;
+                let poll = user.polls.id(_id);
+                let input = poll.inputs.id(req.body.optionId);
+                
+                input.votes++;
+                input.voters.push(req.body.userId ? req.body.userId : 'anonymous');
+                console.log({input});
+
+                user.markModified('inputs');
+
+                user.save(function(err, data) {
                     if (err) {
                         res.statusCode = 500;
                         return res.json({ title: 'Error', message: err });

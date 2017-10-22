@@ -31,6 +31,8 @@ export default class PollEditor extends Component {
             userId: this.props.userId,
             title: '',
             titleSaved: false,
+            pollURL: '',
+            pollSaved: false,
             isAuth: this.props.isAuth,
             options: [],
             pollId: ''
@@ -51,7 +53,7 @@ export default class PollEditor extends Component {
         e.preventDefault();
 
         addTitle(this.state.userId, this.state.pollId, this.state.title, this.state.isAuth)
-            .then(success=>{console.log('Title Saved'); this.setState({titleSaved: true})})
+            .then(res=>{console.log('Title Saved'); this.setState({titleSaved: true, pollURL:res.poll.url })})
             .catch(err=>console.error(err));
     }
 
@@ -67,7 +69,7 @@ export default class PollEditor extends Component {
         e.preventDefault()
 
         savePoll(this.state.userId, this.state.pollId, this.state.isAuth)
-            .then(success=> console.log('Poll Saved')) //redirect somewhere
+            .then(success=>{ console.log('Poll Saved'); this.setState({pollSaved: true})})
             .catch(err=>console.error(err));
     }
 
@@ -202,35 +204,40 @@ export default class PollEditor extends Component {
 
     render() {
         if(this.props.userId && this.props.isAuth) {
-            return (
-                <div className='poll-editor'>
-                    <div className="title-input-group">
-                        <label htmlFor="title">Title <i className="fa fa-question" aria-hidden="true"></i></label>
-                        <input 
-                            type="text" 
-                            value={this.state.title} 
-                            name='title' 
-                            placeholder='Who do you want to be your captain?' 
-                            onChange={this.handleInput} 
-                            disabled={this.state.titleSaved ? true : false}
-                        />
-                        <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                        <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleClear} name='title'>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
-                        
-                    </div>
-                    <div className="option-inputs">
-                        {this.renderOptions(this.state.options)}
-                        <div className="poll-controls">
-                            <button onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
-                            {this.renderSaveButton(this.state.options)}
-                            <button onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+            if(!this.state.pollSaved) {
+                return (
+                    <div className='poll-editor'>
+                        <div className="title-input-group">
+                            <label htmlFor="title">Title <i className="fa fa-question" aria-hidden="true"></i></label>
+                            <input 
+                                type="text" 
+                                value={this.state.title} 
+                                name='title' 
+                                placeholder='Who do you want to be your captain?' 
+                                onChange={this.handleInput} 
+                                disabled={this.state.titleSaved ? true : false}
+                            />
+                            <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                            <button className={this.state.titleSaved ? 'hidden' : ''} onClick={this.handleClear} name='title'>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
+                            
+                        </div>
+                        <div className="option-inputs">
+                            {this.renderOptions(this.state.options)}
+                            <div className="poll-controls">
+                                <button onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                                {this.renderSaveButton(this.state.options)}
+                                <button onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )
+                )
+            } else return <Redirect to={{
+                pathname: this.state.pollURL,
+                state: { from: {pathname: this.props.location}}
+            }}/>
         } else return <Redirect to={{
             pathname: '/login',
-            state: { from: {pathname: '/create/my' }}
+            state: { from: {pathname: this.props.location }}
         }}/>
     }
 }

@@ -48,8 +48,11 @@ module.exports = function(app) {
     router.get('/polls/byUser/single/:creatorId/:title', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var index = user.polls.indexOf({ title: data.title });
-                res.json({ poll: user.polls.toObject()[index] });
+                var filtered = user.polls.filter(function (poll) {
+                    return poll.title === req.params.title;
+                });
+                var poll = filtered[0];
+                res.json({ poll });
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -58,18 +61,28 @@ module.exports = function(app) {
     });
 
     router.get('/polls/all/', function(req, res) {
-        User.aggregate([{
+        User.aggregate([
+            {
+                $match: {
+                    polls: {
+                        $ne: []
+                    }
+                }
+            },{
                 $project: {
                     _id: 0,
-                    username: 0,
-                    password: 0
+                    polls: {
+                        $filter: {
+                            input: '$polls', 
+                            as: 'poll',
+                            cond: { 
+                                $ne: ["$$poll.status",'incomplete'] 
+                            }
+                        }
+                    }
                 }
             }, {
                 $unwind: '$polls'
-            },{
-                $match: {
-                    'polls.status': 'complete'
-                }
             }],
             function(err, polls) {
                 if (err) {

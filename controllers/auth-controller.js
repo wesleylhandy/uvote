@@ -6,11 +6,17 @@ const User = require('../models/User');
 
 module.exports = function(app) {
 
+    router.get('/session', function(req, res){
+        if(req.isAuthenticated()){
+            res.json({user: req.user, isAuth: true})
+        } else res.json({user: null, isAuth: false})
+    })
+
     // sign-up new user
     router.post('/signup', function(req, res){
         let userData = {
-            username: req.body.username,
-            password: req.body.password,
+            username: req.body.newUser.username,
+            password: req.body.newUser.password,
             creatorId: shortid.generate()
         }
 

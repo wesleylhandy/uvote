@@ -8,8 +8,11 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
-mongoose.set('debug', true);
-require('dotenv').config();
+const MongoStore = require('connect-mongo')(session);
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').load();
+}
 
 // set Mongoose promises to es6 promises
 mongoose.Promise = Promise;
@@ -28,6 +31,16 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
+app.set('port', port);
+
+// MongoDB
+var uri = 'mongodb://' + process.env.MLAB_USER + ':' + process.env.MLAB_PASS + '@ds135983.mlab.com:35983/devserver';
+
+//connect to mongodb//set controllers and sockets here to have access to DB
+mongoose.connect(uri, { useMongoClient: true })
+const db = mongoose.connection;
+mongoose.set('debug', true);
+db.on('error', console.error.bind(console, '# Mongo DB: connection error:'));
 //add session support
 app.set('trust proxy', 1) // trust first proxy
 const month = 1000 * 60 * 60 * 24 * 31;
@@ -36,19 +49,20 @@ app.use(session({
     secret: 'twentythree@#@#2323',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: month }
+    cookie: { maxAge: month },
+    store: new MongoStore({ mongooseConnection: db })
 }));
-
-app.set('port', port);
-
-// MongoDB
-var uri = 'mongodb://' + process.env.MLAB_USER + ':' + process.env.MLAB_PASS + '@ds135983.mlab.com:35983/devserver';
-
-//connect to mongodb//set controllers and sockets here to have access to DB
-mongoose.connect(uri, { useMongoClient: true }).then(() => console.log('connected to DB!')).catch(err => console.log(err));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req, res, next){
+    console.log(req.session);
+    console.log('**************************');
+    console.log(req.user);
+    console.log('**************************');
+    next();
+})
 
 //set up passport for user authentication
 const passportConfig = require('./config/passport');
