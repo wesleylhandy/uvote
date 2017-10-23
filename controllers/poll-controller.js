@@ -4,33 +4,26 @@ const User = require('../models/User');
 module.exports = function(app) {
 
     router.get('/polls/byUser/complete/:creatorId', function(req, res) {
-        User.findOne({
-                creatorId: req.params.creatorId
-            })
+        User.findOne({creatorId: req.params.creatorId})
             .then(user => {
                 var completedPolls = user.polls.filter(function(poll) {
                     return poll.status == 'complete'
                 });
                 res.json({ polls: completedPolls });
-            })
-            .catch(err => {
+            }).catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
             });
     });
 
     router.get('/polls/byUser/incomplete/:creatorId', function(req, res) {
-        User.findOne({
-                creatorId: req.params.creatorId
-            })
+        User.findOne({creatorId: req.params.creatorId})
             .then(user => {
                 var completedPolls = user.polls.filter(function(poll) {
                     return poll.status == 'incomplete'
                 });
                 res.json(completedPolls);
-            })
-            .then(user => res.json({ polls: user.polls }))
-            .catch(err => {
+            }).catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
             });
@@ -38,7 +31,11 @@ module.exports = function(app) {
 
     router.get('/polls/byUser/all/:creatorId', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
-            .then(user => res.json({polls:  user.polls }))
+            .then(user => {
+                const polls = user.polls;
+                console.log(polls);
+                res.json({polls})
+            })
             .catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
@@ -146,6 +143,8 @@ module.exports = function(app) {
                     const poll = user.polls.id(req.body.pollId);
                     poll.title = title;
                     poll.url = url;
+                    poll.voters = [];
+                    user.markModified('polls');
                     user.save(function(err, data) {
                         if (err) {
                             res.statusCode = 500;
@@ -171,13 +170,12 @@ module.exports = function(app) {
         }
 
         let title = req.body.option.title,
-            order = req.body.option.order,
-            voters= [];
+            order = req.body.option.order;
+    
 
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                const input = {order, title, voters};
-                console.log({input});
+                const input = {order, title};
                 user.polls.id(req.body.pollId).inputs.push(input);
                 user.markModified('polls');
                 user.save(function(err, data) {

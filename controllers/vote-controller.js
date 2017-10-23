@@ -15,9 +15,9 @@ module.exports = function(app) {
                 let input = poll.inputs.id(req.body.optionId);
                 
                 input.votes++;
-                input.voters.push(req.body.userId ? req.body.userId : 'anonymous');
+                poll.voters.push(req.body.userId ? req.body.userId : 'anonymous');
                 console.log({input});
-
+                user.markModified('polls');
                 user.markModified('inputs');
 
                 user.save(function(err, data) {

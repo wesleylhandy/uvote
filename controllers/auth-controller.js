@@ -25,7 +25,7 @@ module.exports = function(app) {
         newUser.save(function(err, data) {
 
             if (err) {
-
+                console.error(JSON.stringify(err, null, 2))
                 if (err.message.includes('duplicate')) {
                     res.statusCode = 500;
                     res.send({ title: 'Duplicate Username', message: 'Please choose another username. Try using your email address.' });
@@ -40,6 +40,8 @@ module.exports = function(app) {
                     res.send({ title: 'Server Error', message: 'We could not process your request. Please check your data and your connection and try again.' })
                 }
             } else {
+                req.session.username = userData.creatorId;
+                req.session.save();
                 res.json(data);
             }
         });

@@ -57,6 +57,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next){
+    console.log('**************************');
     console.log(req.session);
     console.log('**************************');
     console.log(req.user);

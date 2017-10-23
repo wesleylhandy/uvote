@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {Doughnut as DoughnutChart} from 'react-chartjs';
+import {Doughnut} from 'react-chartjs-2';
 
-import {getSinglePoll, vote} from '../utils/helpers';
+import {getSession, getSinglePoll, vote} from '../utils/helpers';
 
 export default class Poll extends Component {
     constructor(props){
@@ -13,7 +13,6 @@ export default class Poll extends Component {
             userId: props.userId,
             isAuth: props.isAuth,
             hasVoted: false,
-            hasPollData: false,
             optionChecked: null
         }
         this.renderInputs = this.renderInputs.bind(this);
@@ -24,14 +23,21 @@ export default class Poll extends Component {
     }
 
     updatePollData() {
+        //get poll data on mount or after vote
         getSinglePoll(this.state.creatorId, this.state.title)
             .then(res=>{
-                this.setState({poll: res.poll, hasPollData: true})
+                const hasVoted = this.state.hasVoted || res.poll.voters.includes(this.state.userId) ? true : false;
+                this.setState({poll: res.poll, hasVoted: hasVoted});
             })
             .catch(err=>alert(JSON.stringify(err, null, 2)));
     }
     componentDidMount() {
-        this.updatePollData();
+        //check session for user and update
+        getSession()
+            .then(res=>{
+                this.setState({userId: res.user, isAuth: res.isAuth})
+                this.updatePollData();
+            })
     }
     renderInputs(poll) {
         if (poll && !this.state.hasVoted) {
@@ -52,23 +58,51 @@ export default class Poll extends Component {
                     <button type='submit'>Submit</button>
                 </form>
             )
-        } else if (poll & this.state.hasVoted) {
-            this.renderChart(poll);
-        } else return 
+        } else if (poll && this.state.hasVoted) {
+            return (
+                <div className='poll-display'>
+                    {
+                        poll.inputs.map((input, index)=>{
+                            return (
+                                <div className='option-display-group' key={index}>
+                                    <div>{input.title} - Votes: {input.votes}</div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            )
+        } else return <div>Poll could not be found in the database. It is possible the creator deleted the poll.</div>
     }
     renderChart(poll){
         if (poll) {
-            var data = {
+            var obj = {
                 labels: [],
-                colors: []
+                colors: [],
+                data: []
             };
+
             poll.inputs.forEach((input, ind, arr)=>{
-                data.labels.push(input.title);
-                data.colors.push(`hsla(${((360 / arr.length) * ind) + 20}, 100%, 45%, 0.9)`);
+                obj.labels.push(input.title);
+                obj.colors.push(`hsla(${((360 / arr.length) * ind) + 20}, 100%, 45%, 0.9)`);
+                obj.data.push(input.votes);
             });
-            return <DoughnutChart data={data}/>
+
+            const data = {
+                datasets: [{
+                    data: obj.data,
+                    backgroundColor: obj.colors,
+                }],
+                labels: obj.labels
+            }
+
+            return <div className='poll-visualization'><Doughnut data={data} ref='chart' width={400} height={400}/></div>
+        
+        } else {
+            //this should never return....
+            ///but...
+            return <p>No Data is Available for the poll at {this.props.history.location.pathname}</p>
         }
-        return <p>No Data is Available for this Poll</p>
     }
 
     handleOptionChange(e) {
@@ -91,6 +125,7 @@ export default class Poll extends Component {
             <div className='poll'>
                 <div className='poll-title'>{decodeURIComponent(this.state.title)}</div>
                 {this.renderInputs(this.state.poll)}
+                {this.renderChart(this.state.poll)}
             </div>
         )
     }

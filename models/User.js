@@ -15,8 +15,7 @@ const InputSchema = new Schema({
     votes: {
         type: Number,
         default: 0
-    },
-    voters: [String]
+    }
 });
 
 const PollSchema = new Schema({
@@ -29,7 +28,8 @@ const PollSchema = new Schema({
     status: {
         type: String,
         default: 'incomplete'
-    }
+    },
+    voters: [String]
 });
 const UserSchema = new Schema({
     username: {
