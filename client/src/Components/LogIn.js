@@ -119,15 +119,15 @@ export default class Authentication extends Component {
                     <p>{ message }</p>
                     <form onSubmit={this.login} className={this.props.isAuth ? 'auth-form hidden' : 'auth-form'}>
                         <div className='form-group'>
-                            <div className={this.state.username_field.status !== 'error' ? 'validation hidden' : 'validation'} required>{this.state.username_field.validation}</div>
                             <div className='required'>{this.state.username_field.error_label}</div>
                             <label htmlFor="username"><i className="fa fa-user-o" aria-hidden="true"></i></label>
+                            <div className={this.state.username_field.status !== 'error' ? 'hidden' : 'validation'} required>{this.state.username_field.validation}</div>
                             <input type='email' name='username' placeholder='you@example.com' value={this.state.username_field.value} onChange={this.handleInput}/>
                         </div>
                         <div className='form-group'>
-                            <div className={this.state.password_field.status !== 'error' ? 'validation hidden' : 'validation'} required>{this.state.password_field.validation}</div>
                             <div className='required'>{this.state.password_field.error_label}</div>
                             <label htmlFor="password"><i className="fa fa-key" aria-hidden="true"></i></label>
+                            <div className={this.state.password_field.status !== 'error' ? 'hidden' : 'validation'} required>{this.state.password_field.validation}</div>
                             <input type='text' name='password' placeholder='ex: abc123D$' value={this.state.dots} onChange={this.handleInput}/>
                         </div>
                         <button onClick={ this.login }>Log In</button> 

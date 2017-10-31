@@ -1,3 +1,238 @@
 .hidden {
     display: none;
 }
+
+.container {
+    max-width: 1152px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+header nav>ul {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 100px;
+    background: #f1f1f1;
+    justify-content: right;
+    -webkit-padding-start: 0;
+    list-style-type: none;
+}
+
+header nav>ul>li {
+    align-self: center;
+    cursor: pointer;
+    width: auto;
+}
+
+header nav>ul>li a {
+    color: #5e3b35;
+    font-size: 20px;
+    padding: 40px;
+    text-decoration: none;
+    line-height: 1;
+    text-align: center;
+}
+
+.login-links {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100px;
+}
+
+.login-links a {
+    display: block;
+    padding: 15px 40px;
+    line-height: 1;
+    height: 50px;
+}
+
+header nav>ul>li a:hover {
+    background: #e3e3e3;
+}
+
+.login-links a+a {
+    border-top: 1px solid #7f7f7f;
+}
+
+@media screen and (max-width: 506px) {
+    /* adjust nav li width */
+}
+
+.ReactModal__Content {
+    width: 50%;
+}
+
+.ReactModal__Content p {
+    font-size: 26px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.ReactModal__Content form {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.ReactModal__Content form .form-group {
+    display: flex;
+    flex-direction: row;
+    margin: 15px 0;
+    position: relative;
+}
+
+.ReactModal__Content form .form-group label {
+    padding: 20px 0;
+    font-size: 24px;
+    width: 70px;
+    text-align: center;
+    border: 1px solid rgb(204, 204, 204);
+    border-right: none;
+}
+
+.ReactModal__Content form .form-group input {
+    flex: 1 1 auto;
+    font-size: 24px;
+    padding: 20px;
+}
+
+.ReactModal__Content form .form-group .validation {
+    position: absolute;
+    font-size: 12px;
+    top: 5px;
+    left: 90px;
+    color: crimson;
+}
+
+.ReactModal__Content form .form-group .required {
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    color: crimson;
+}
+
+.ReactModal__Content form .form-group .validation+input {
+    border: 1px solid crimson;
+}
+
+form button {
+    font-size: 24px;
+    padding: 20px;
+    border: 1px solid green;
+    border-radius: 20px;
+    background: limegreen;
+    color: white;
+    margin: 20px 0;
+}
+
+.polls-list-section {
+    margin: 30px 0;
+}
+
+.polls-list-section ul {
+    width: 100%;
+    list-style-type: none;
+    font-size: 24px;
+    border: 1px solid green;
+}
+
+.polls-list-section ul li {
+    padding: 40px 40px;
+}
+
+.polls-list-section ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.polls-list-section ul li:nth-of-type(odd) {
+    background-color: coral;
+}
+
+.polls-list-section ul li:nth-of-type(even) {
+    background-color: darkturquoise;
+}
+
+.polls-list-section ul li+li {
+    border-top: 1px solid green;
+}
+
+.polls-list-section ul li:hover {
+    background: rgba(0, 0, 0, .21);
+    text-decoration: underline;
+    color: #f3f3f3;
+}
+
+.poll {
+    margin: 40px auto;
+}
+
+.poll-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 auto;
+}
+
+.poll .poll-container {
+    margin: 30px auto;
+    width: 90%;
+    border: 1px solid green;
+    padding: 30px 0;
+}
+
+.poll .input-group {
+    font-size: 20px;
+    padding: 20px 10px;
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.poll .input-group:nth-of-type(even) {
+    background: rgba(0, 0, 0, .11)
+}
+
+.poll .input-group:nth-of-type(odd) {
+    background: rgba(0, 0, 0, .05)
+}
+
+.poll .input-group.checked {
+    background: aquamarine;
+}
+
+.poll form button {
+    margin: 40px 0 0 10%;
+}
+
+.poll .poll-visualization {
+    position: relative;
+    height: 90%;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.poll .option-display-group {
+    width: 90%;
+    margin: 0 auto;
+    font-size: 20px;
+    padding: 20px 0;
+    text-align: center;
+    display: none;
+}
+
+@media screen and (max-width: 506px) {
+    .poll .poll-container {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .poll .poll-visualization {
+        width: 100%;
+        height: 100%;
+    }
+}

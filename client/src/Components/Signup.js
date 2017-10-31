@@ -83,7 +83,7 @@ export default class SignUp extends Component {
                 error_label: '*',
                 value: '',
                 status: 'error',
-                validation: 'Password must be at least 8 characters in length include at least 1 lowercase letter, 1 capital letter, 1 number and 1 special character (ie. #?!@$%^&*-_).'
+                validation: 'At least 8 digits + 1 from each: [a - z], [A - Z], [0 - 9] & [ #?!@$%^&*-_ ].'
             }}) 
             
             isValid = false;
@@ -139,15 +139,15 @@ export default class SignUp extends Component {
                     <p>Please Choose a Username and Password</p> 
                     <form onSubmit={this.handleSubmit} className='auth-form'>
                         <div className='form-group'>
-                            <div className={this.state.username_field.status !== 'error' ? 'validation hidden' : 'validation'} required>{this.state.username_field.validation}</div>
                             <div className='required'>{this.state.username_field.error_label}</div>
                             <label htmlFor="username"><i className="fa fa-user-o" aria-hidden="true"></i></label>
+                            <div className={this.state.username_field.status !== 'error' ? 'hidden' : 'validation'} required>{this.state.username_field.validation}</div>
                             <input type='email' name='username' placeholder='you@example.com' value={this.state.username_field.value} onChange={this.handleInput}/>
                         </div>
                         <div className='form-group'>
-                            <div className={this.state.password_field.status !== 'error' ? 'validation hidden' : 'validation'} required>{this.state.password_field.validation}</div>
                             <div className='required'>{this.state.password_field.error_label}</div>
                             <label htmlFor="password"><i className="fa fa-key" aria-hidden="true"></i></label>
+                            <div className={this.state.password_field.status !== 'error' ? 'hidden' : 'validation'} required>{this.state.password_field.validation}</div>
                             <input type='text' name='password' placeholder='ex: abc123D$' value={this.state.dots} onChange={this.handleInput}/>
                         </div>
                         <button onClick={ this.handleSubmit }>Sign Up</button> 

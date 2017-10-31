@@ -44,7 +44,7 @@ export default class Poll extends Component {
             return (
                 <form onSubmit={this.handleVote}>
                     {poll.inputs.map((input, index)=> (
-                        <div className='input-group' key={index}>
+                        <div className={this.state.optionChecked === input._id ? 'input-group checked' : 'input-group'} key={index}>
                             <label htmlFor={input._id}>{input.title}</label>
                             <input type='radio' 
                                 value={input.title} 
@@ -124,8 +124,10 @@ export default class Poll extends Component {
         return (
             <div className='poll'>
                 <div className='poll-title'>{decodeURIComponent(this.state.title)}</div>
-                {this.renderInputs(this.state.poll)}
-                {this.renderChart(this.state.poll)}
+                <div className="poll-container">
+                    {this.renderInputs(this.state.poll)}
+                    {this.renderChart(this.state.poll)}
+                </div>
             </div>
         )
     }

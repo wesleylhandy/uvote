@@ -31,7 +31,11 @@ export default class AllPolls extends Component {
     }
 
     render() {
-        return ( <section className='polls-list-section'>{this.renderPolls(this.state.polls)}</section> );
+        return ( 
+            <section className='polls-list-section'>
+                <h1>All Polls</h1>
+                {this.renderPolls(this.state.polls)}
+            </section> );
         
     }
 }
