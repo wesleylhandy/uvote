@@ -115,6 +115,7 @@ header nav>ul>li a:hover {
     border: 1px solid crimson;
 }
 
+.ReactModal__Content button,
 form button {
     font-size: 24px;
     padding: 20px;
@@ -123,6 +124,13 @@ form button {
     background: limegreen;
     color: white;
     margin: 20px 0;
+}
+
+.ReactModal__Content button.logout {
+    display: block;
+    margin: 20px auto;
+    background: orangered;
+    border-color: firebrick;
 }
 
 .polls-list-section {
@@ -235,4 +243,78 @@ form button {
         width: 100%;
         height: 100%;
     }
+}
+
+.portal-section .user-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background: lightcyan;
+    border: 1px solid lightskyblue;
+    height: 50px;
+}
+
+.portal-section .user-options a,
+.portal-section .user-options .input-group {
+    height: 50px;
+    box-sizing: border-box;
+    border: none;
+    font-size: 20px;
+    flex: 1 1 auto;
+}
+
+.portal-section .user-options .input-group {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+}
+
+.portal-section .user-options .input-group label {
+    padding: 15px 3px 15px 15px;
+    border-right: 1px solid lightskyblue;
+    height: 48px;
+}
+
+.portal-section .user-options .input-group input {
+    padding: 0 15px;
+    flex: 1 1 auto;
+    height: 48px;
+}
+
+.portal-section .user-options .input-group button {
+    background: rgba(255, 255, 255, 0.30);
+    border: none;
+    padding: 0 15px;
+    height: 48px;
+}
+
+.portal-section .user-options a button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    margin: 0 auto;
+    text-align: center;
+    background: transparent;
+}
+
+.portal-section .user-options .input-group button:hover,
+.portal-section .user-options a:hover {
+    background: rgba(0, 0, 0, .07);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.portal-section .user-options .input-group button:focus,
+.portal-section .user-options a:focus {
+    outline: none;
+}
+
+.user-id {
+    margin: 30px 0;
+    font-size: 20px;
+}
+
+.user-id .display-id {
+    color: cadetblue;
+    font-weight: bold;
 }

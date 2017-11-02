@@ -73,7 +73,7 @@ export default class Authentication extends Component {
                 >
                     <p>Please Click Here to Log Out</p>
                     
-                    <button onClick={ this.logout }>Log Out</button> 
+                    <button className='logout' onClick={ this.logout }>Log Out</button> 
                  </Modal>
                 {redirect()}
             </section>

@@ -41,6 +41,11 @@ export default class App extends Component {
         else return <div className='login-links'><Link to='/login'>Login</Link><Link to='/signup'>Signup</Link></div>
     }
 
+    renderPortal = (auth) => {
+        if (auth) return <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} />
+        else return null;
+    }
+
     componentDidMount() {
         getSession()
             .then(res=>{
@@ -67,10 +72,11 @@ export default class App extends Component {
                     <Route path='/signup'render={props=> <SignUp isAuth={this.state.isAuth} updateAuth={this.updateAuth} {...props}/>}/>
                 </header>
                 <main>
+                    {this.renderPortal(this.state.isAuth)}
                     <div className="container">
+                        <Route exact path="/portal" render={props => <div className='user-id'>You're creator ID is <span className='display-id'>{this.state.userId}</span>. All of the polls you create will be saved under this id and can be viewed by the public. You will be able to share your polls with your friends once they are created.</div>}/>
                         <Route exact path="/polls" component={AllPolls}/>
                         <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
-                        <Route exact path="/portal" render={props=> <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
                         <Route exact path='/create/new' render={props => <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} pollData={'none'} {...props}/>}/>
                         <Route exact path='/all/my' render={props => <AllUserPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
                         <Route exact path='/incomplete/my' render={props => <UserIncompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
