@@ -106,8 +106,8 @@ export default class Authentication extends Component {
         const { from } = this.props.location.state || { from: { pathname: '/' } }
         const message = from.pathname === '/' ? `'Enter your email address and password'}` : `You must log in to view the page at ${from.pathname}`;
         const redirect = () => {
-            if(this.state.isAuth) {return <Redirect to='/portal'/>}
-            else if (!this.state.modalIsOpen) {return <Redirect to='/'/>}
+            if(this.state.isAuth) {return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/portal'}/>}
+            else if (!this.state.modalIsOpen) { return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/'}/>}
             else return }
         return ( 
             <section className='auth-section'>

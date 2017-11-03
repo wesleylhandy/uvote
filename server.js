@@ -56,11 +56,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function(req, res, next){
+//middleware to display session data in console - remove for production
+app.use(function(req, res, next) {
     console.log('**************************');
     console.log(req.session);
     console.log('**************************');
-    console.log(req.user);
+    console.log({ loggedin: req.user ? true : false });
     console.log('**************************');
     next();
 })

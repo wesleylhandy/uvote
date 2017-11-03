@@ -21,7 +21,8 @@ const InputSchema = new Schema({
 const PollSchema = new Schema({
     title: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     url: String,
     inputs: [InputSchema],

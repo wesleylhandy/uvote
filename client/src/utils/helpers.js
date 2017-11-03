@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export function getSession(){
-    return new Promise((resolve, reject)=> {
+export function getSession() {
+    return new Promise((resolve, reject) => {
         axios.get('/api/session').then(response => {
             resolve(response.data);
         }).catch(err => {
@@ -23,6 +23,17 @@ export function authUser(username, password) {
     });
 }
 
+export function guestUser(guestName) {
+    return new Promise((resolve, reject) => {
+        axios.post('/api/guestuser', { guestName }).then(response => {
+            resolve(response.data);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+    });
+}
+
 export function unAuthUser() {
     return new Promise((resolve, reject) => {
         axios.post('/api/logout').then(response => {
@@ -35,7 +46,6 @@ export function unAuthUser() {
 
 export function newUser(newUser) {
     return new Promise((resolve, reject) => {
-        console.log(newUser);
         axios.post('/api/signup', { newUser }).then(response => {
             resolve(response.data);
         }).catch(err => {
@@ -86,7 +96,7 @@ export function getMyIncompletePolls(creatorId, isAuth) {
     });
 }
 
-export function getAnotherUsersPolls(creatorId) {
+export function getUsersCompletePolls(creatorId) {
     return new Promise((resolve, reject) => {
         axios.get(`/api/polls/byUser/complete/${creatorId}`).then(response => {
             resolve(response.data);
@@ -100,6 +110,17 @@ export function getAnotherUsersPolls(creatorId) {
 export function getSinglePoll(id, title) {
     return new Promise((resolve, reject) => {
         axios.get(`/api/polls/byUser/single/${id}/${title}`).then(response => {
+            resolve(response.data);
+        }).catch(err => {
+            if (err) reject(err.response.data);
+            else reject({ title: 'Error', message: 'Service Unavailable - Please try again later.' });
+        });
+    });
+}
+
+export function getUnsavedPoll(userId, pollId) {
+    return new Promise((resolve, reject) => {
+        axios.get(`/api/polls/byUser/byId/${userId}/${pollId}`).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
@@ -168,7 +189,7 @@ export function changeOptionOrder(creatorId, pollId, options, isAuth) {
 
 export function deleteOption(creatorId, pollId, optionId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.delete(`/api/polls/inputs/delete/${creatorId}`, { pollId, optionId, isAuth }).then(response => {
+        axios.delete(`/api/polls/inputs/delete/${pollId}/${optionId}`, { isAuth }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);
@@ -179,7 +200,7 @@ export function deleteOption(creatorId, pollId, optionId, isAuth) {
 
 export function deletePoll(pollId, creatorId, isAuth) {
     return new Promise((resolve, reject) => {
-        axios.delete(`/api/polls/delete/${creatorId}`, { pollId, isAuth }).then(response => {
+        axios.delete(`/api/polls/delete/${pollId}`, { isAuth }).then(response => {
             resolve(response.data);
         }).catch(err => {
             if (err) reject(err.response.data);

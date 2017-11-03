@@ -6,14 +6,22 @@ const User = require('../models/User');
 
 module.exports = function(app) {
 
-    router.get('/session', function(req, res){
-        if(req.isAuthenticated()){
-            res.json({user: req.user, isAuth: true})
-        } else res.json({user: null, isAuth: false})
+    router.get('/session', function(req, res) {
+        //log of session data retrieved from request for setting state
+        console.log('-------------------');
+        console.log({ authenticated: req.isAuthenticated() });
+        console.log({ user: req.user });
+        console.log({ guest: req.session.guest });
+        console.log({ guestUser: req.session.username });
+        console.log('-------------------');
+
+        if (req.isAuthenticated()) {
+            res.json({ user: req.user, isAuth: !req.session.guest })
+        } else res.json({ user: req.session.username, isAuth: !req.session.guest })
     })
 
     // sign-up new user
-    router.post('/signup', function(req, res){
+    router.post('/signup', function(req, res) {
         let userData = {
             username: req.body.newUser.username,
             password: req.body.newUser.password,
@@ -40,7 +48,31 @@ module.exports = function(app) {
                     res.send({ title: 'Server Error', message: 'We could not process your request. Please check your data and your connection and try again.' })
                 }
             } else {
-                req.session.username = userData.creatorId;
+                req.user = userData.creatorId;
+                req.session.guest = false;
+                req.session.save();
+                res.json(data);
+            }
+        });
+    });
+
+    //create store for unauthorized user
+    router.post('/guestuser', function(req, res) {
+        let unAuthedUser = new User({
+            username: req.body.guestName,
+            password: 'P@ssw0rd!',
+            creatorId: req.body.guestName
+        });
+
+        unAuthedUser.save(function(err, data) {
+            if (err) {
+                console.error(JSON.stringify(err, null, 2))
+                res.statusCode = 400;
+                res.send({ title: 'Server Error', message: 'We could not process your request. Please check your data and your connection and try again.' });
+            } else {
+                req.user = req.body.guestName;
+                req.session.username = req.body.guestName;
+                req.session.guest = true;
                 req.session.save();
                 res.json(data);
             }
@@ -50,6 +82,8 @@ module.exports = function(app) {
     //
     router.post('/login', passport.authenticate('local'), function(req, res) {
         if (req.user) {
+            req.session.guest = false;
+            req.session.save();
             res.json(req.user)
         } else {
             res.statusCode = req.statusCode;

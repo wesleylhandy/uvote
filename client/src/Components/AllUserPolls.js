@@ -15,7 +15,6 @@ export default class AllMyPolls extends Component {
     }
 
     componentDidMount() {
-        this.setState({userId: this.props.userId, isAuth: this.props.isAuth});
         if(this.state.userId) {
             getAllMyPolls(this.state.userId, this.state.isAuth).then(res => {
                     this.setState({polls: res.polls});
@@ -28,7 +27,7 @@ export default class AllMyPolls extends Component {
                 <ul>
                     {
                         polls.map((poll, index)=> {
-                            if(poll.url) {
+                            if(poll.status === 'complete') {
                                 return (
                                     <li key={index}>
                                         <Link to={poll.url}>{poll.title}</Link>
@@ -39,7 +38,7 @@ export default class AllMyPolls extends Component {
                                 const endpoint = `/edit/my/${poll._id}`
                                 return (
                                     <li key={index}>
-                                        <Link to={endpoint}>{poll._id}</Link>
+                                        <Link to={endpoint}>{poll.hasOwnProperty('title') ? poll.title : poll._id}</Link>
                                         <span> Status - {poll.status}</span>
                                     </li>
                                 )

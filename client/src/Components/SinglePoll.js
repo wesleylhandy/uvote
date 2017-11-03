@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import {Doughnut} from 'react-chartjs-2';
+import shortid from 'shortid';
 
-import {getSession, getSinglePoll, vote} from '../utils/helpers';
+import {getSession, getSinglePoll, vote, guestUser} from '../utils/helpers';
+import TwitterLogo from './TwitterLogo.js';
 
 export default class Poll extends Component {
     constructor(props){
@@ -32,12 +34,19 @@ export default class Poll extends Component {
             .catch(err=>alert(JSON.stringify(err, null, 2)));
     }
     componentDidMount() {
-        //check session for user and update
         getSession()
-            .then(res=>{
-                this.setState({userId: res.user, isAuth: res.isAuth})
-                this.updatePollData();
+            .then(res => {
+                this.setState({ userId: res.user, isAuth: res.isAuth });
+                if (!this.state.userId) {
+                    const userId = `guest${shortid.generate()}`;
+                    guestUser(userId)
+                        .then(res => this.setState({ userId: userId, isAuth: false }))
+                        .catch(err => alert(JSON.stringify(err, null, 2)))
+                }
             })
+            .catch(err => console.error(err));
+        
+        this.updatePollData();
     }
     renderInputs(poll) {
         if (poll && !this.state.hasVoted) {
@@ -72,7 +81,7 @@ export default class Poll extends Component {
                     }
                 </div>
             )
-        } else return <div>Poll could not be found in the database. It is possible the creator deleted the poll.</div>
+        } else return <div className='no-data'>Poll could not be found in the database. It is possible the creator deleted the poll.</div>
     }
     renderChart(poll){
         if (poll) {
@@ -101,7 +110,7 @@ export default class Poll extends Component {
         } else {
             //this should never return....
             ///but...
-            return <p>No Data is Available for the poll at {this.props.history.location.pathname}</p>
+            return <div className='no-data'>No Data is Available for the poll at {this.props.history.location.pathname}</div>
         }
     }
 
@@ -126,7 +135,13 @@ export default class Poll extends Component {
                 <div className='poll-title'>{decodeURIComponent(this.state.title)}</div>
                 <div className="poll-container">
                     {this.renderInputs(this.state.poll)}
+                    <hr className={this.state.hasVoted ? 'hidden' : ''}/>
                     {this.renderChart(this.state.poll)}
+                    <hr />
+                    <div className="tweetContainer">
+                        <TwitterLogo />
+                        <div className="tweet-cta">Share This Poll With Your Friends</div>
+                    </div>
                 </div>
             </div>
         )

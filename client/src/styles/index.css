@@ -1,3 +1,5 @@
+/****   GLOBAL  ****/
+
 .hidden {
     display: none;
 }
@@ -7,6 +9,9 @@
     width: 90%;
     margin: 0 auto;
 }
+
+
+/*****  HEADER  *****/
 
 header nav>ul {
     display: flex;
@@ -58,6 +63,9 @@ header nav>ul>li a:hover {
 @media screen and (max-width: 506px) {
     /* adjust nav li width */
 }
+
+
+/****   LOGIN/LOGOUT MODAL  ****/
 
 .ReactModal__Content {
     width: 50%;
@@ -133,6 +141,9 @@ form button {
     border-color: firebrick;
 }
 
+
+/****   ALL POLLS   ****/
+
 .polls-list-section {
     margin: 30px 0;
 }
@@ -172,6 +183,14 @@ form button {
     color: #f3f3f3;
 }
 
+.polls-list-section>p {
+    font-size: 20px;
+    text-align: center;
+}
+
+
+/****   SINGLE POLL ****/
+
 .poll {
     margin: 40px auto;
 }
@@ -188,6 +207,11 @@ form button {
     width: 90%;
     border: 1px solid green;
     padding: 30px 0;
+}
+
+.poll .poll-container hr {
+    margin: 30px auto;
+    width: 90%;
 }
 
 .poll .input-group {
@@ -232,6 +256,12 @@ form button {
     display: none;
 }
 
+.poll .no-data {
+    margin: 0 auto;
+    text-align: center;
+    width: 90%;
+}
+
 @media screen and (max-width: 506px) {
     .poll .poll-container {
         width: 100%;
@@ -244,6 +274,9 @@ form button {
         height: 100%;
     }
 }
+
+
+/****   USER PORTAL ****/
 
 .portal-section .user-options {
     display: flex;
@@ -317,4 +350,107 @@ form button {
 .user-id .display-id {
     color: cadetblue;
     font-weight: bold;
+}
+
+
+/*****  POLL EDITOR *****/
+
+.poll-editor {
+    width: 90%;
+    margin: 30px auto;
+}
+
+.poll-editor .title-input-group,
+.poll-editor .option-inputs .option-input-group {
+    font-size: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 20px 0;
+}
+
+.poll-editor .title-input-group label,
+.poll-editor .option-inputs .option-input-group label,
+.poll-editor .option-inputs .option-input-group button,
+.poll-editor .title-input-group button {
+    padding: 15px;
+    font-weight: bold;
+}
+
+.poll-editor .title-input-group input,
+.poll-editor .option-inputs .option-input-group input {
+    flex: 1;
+    padding: 15px;
+}
+
+.poll-controls button {
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px;
+    padding: 15px;
+}
+
+.poll-editor .option-inputs {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.save-button {
+    background: lime;
+    border-color: forestgreen;
+    color: forestgreen;
+}
+
+.delete-button {
+    background: lightcoral;
+    border-color: darkred;
+    color: darkred;
+}
+
+.clear-button {
+    background: whitesmoke;
+    border-color: chocolate;
+    color: chocolate;
+}
+
+.add-button {
+    background: plum;
+    color: darkmagenta;
+    border-color: darkmagenta;
+}
+
+
+/****   SOCIAL MEDIA  ****/
+
+.tweet-container {
+    position: relative;
+}
+
+.twitter-icon-group {
+    top: 0;
+    transform: translateY(-90%);
+    position: absolute;
+}
+
+.twitter-outline,
+.twitter-icon {
+    transition: 300ms all;
+    transform-origin: 50% 50%;
+}
+
+.twitter-icon-group:hover .twitter-outline {
+    transform: scale(0);
+}
+
+.twitter-icon-group:hover .twitter-icon {
+    transform: scale(3);
+    stroke: #4099ff;
+    opacity: 0;
+}
+
+.tweet-cta {
+    color: #4099ff;
+    position: absolute;
+    left: 100px;
 }

@@ -4,7 +4,7 @@ const User = require('../models/User');
 module.exports = function(app) {
 
     router.get('/polls/byUser/complete/:creatorId', function(req, res) {
-        User.findOne({creatorId: req.params.creatorId})
+        User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
                 var completedPolls = user.polls.filter(function(poll) {
                     return poll.status == 'complete'
@@ -17,12 +17,12 @@ module.exports = function(app) {
     });
 
     router.get('/polls/byUser/incomplete/:creatorId', function(req, res) {
-        User.findOne({creatorId: req.params.creatorId})
+        User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var completedPolls = user.polls.filter(function(poll) {
+                var incompletePolls = user.polls.filter(function(poll) {
                     return poll.status == 'incomplete'
                 });
-                res.json(completedPolls);
+                res.json({ polls: incompletePolls });
             }).catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
@@ -34,7 +34,7 @@ module.exports = function(app) {
             .then(user => {
                 const polls = user.polls;
                 console.log(polls);
-                res.json({polls})
+                res.json({ polls })
             })
             .catch(err => {
                 res.statusCode = 500;
@@ -42,10 +42,22 @@ module.exports = function(app) {
             });
     });
 
+    router.get('/polls/byUser/byId/:creatorId/:pollId', function(req, res) {
+        User.findOne({ creatorId: req.params.creatorId })
+            .then(user => {
+                var poll = user.polls.id(req.params.pollId);
+                res.json({ poll });
+            })
+            .catch(err => {
+                res.statusCode = 500;
+                res.json({ title: 'Error', message: err });
+            });
+    })
+
     router.get('/polls/byUser/single/:creatorId/:title', function(req, res) {
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                var filtered = user.polls.filter(function (poll) {
+                var filtered = user.polls.filter(function(poll) {
                     return poll.title === req.params.title;
                 });
                 var poll = filtered[0];
@@ -58,22 +70,21 @@ module.exports = function(app) {
     });
 
     router.get('/polls/all/', function(req, res) {
-        User.aggregate([
-            {
+        User.aggregate([{
                 $match: {
                     polls: {
                         $ne: []
                     }
                 }
-            },{
+            }, {
                 $project: {
                     _id: 0,
                     polls: {
                         $filter: {
-                            input: '$polls', 
+                            input: '$polls',
                             as: 'poll',
-                            cond: { 
-                                $ne: ["$$poll.status",'incomplete'] 
+                            cond: {
+                                $ne: ["$$poll.status", 'incomplete']
                             }
                         }
                     }
@@ -114,7 +125,7 @@ module.exports = function(app) {
                         return res.json({ title: 'Error', message: err });
                     }
                     console.log('Success!');
-                    res.json({ poll: poll});
+                    res.json({ poll: poll });
                 });
             }).catch(err => {
                 res.statusCode = 500;
@@ -122,9 +133,9 @@ module.exports = function(app) {
             });
     });
 
-    router.put('/polls/title/add/:creatorId', function(req, res){
+    router.put('/polls/title/add/:creatorId', function(req, res) {
         let isAuth = req.body.isAuth;
-        
+
         if (isAuth == false) {
             res.statusCode = 401;
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to create a new poll.' });
@@ -132,7 +143,7 @@ module.exports = function(app) {
 
         let title = req.body.title,
             url = '/polls/single/' + req.params.creatorId + '/' + encodeURIComponent(req.body.title);
-        
+
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
                 const index = user.polls.indexOf({ title: title });
@@ -151,7 +162,7 @@ module.exports = function(app) {
                             return res.json({ title: 'Error', message: err });
                         }
                         console.log('Success!');
-                        res.json({ poll: data.polls.id(req.body.pollId)});
+                        res.json({ poll: data.polls.id(req.body.pollId) });
                     });
                 }
             })
@@ -171,11 +182,11 @@ module.exports = function(app) {
 
         let title = req.body.option.title,
             order = req.body.option.order;
-    
+
 
         User.findOne({ creatorId: req.params.creatorId })
             .then(user => {
-                const input = {order, title};
+                const input = { order, title };
                 user.polls.id(req.body.pollId).inputs.push(input);
                 user.markModified('polls');
                 user.save(function(err, data) {
@@ -250,7 +261,7 @@ module.exports = function(app) {
             });
     });
 
-    router.delete('/inputs/delete/:creatorId', function(req, res) {
+    router.delete('/polls/inputs/delete/:pollId/:optionId', function(req, res) {
         let isAuth = req.body.isAuth;
 
         if (isAuth == false) {
@@ -258,47 +269,40 @@ module.exports = function(app) {
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
 
-        User.findOne({ creatorId: req.params.creatorId })
-            .then(user => {
-                user.polls.id(req.body.pollId).inputs.pull({_id: req.body.optionId});
-                user.save(function(err) {
-                    if (err) {
-                        res.statusCode = 500;
-                        return res.json({ title: 'Error', message: err });
-                    }
-                    console.log('Successfully Deleted Option!');
-                    res.json(user);
-                });
-            })
-            .catch(err => {
+        User.update({ "polls._id": req.params.pollId, "polls.inputs._id": req.params.optionId }, {
+            "$pull": {
+                "polls.$.inputs": { "_id": req.params.optionId }
+            }
+        }, function(err, data) {
+            if (err) {
                 res.statusCode = 500;
-                res.json({ title: 'Error', message: err });
-            });
+                return res.json({ title: 'Error', message: err });
+            }
+            res.json(data);
+        });
+
     });
 
-    router.delete('/polls/delete/:creatorId', function(req, res) {
+
+    router.delete('/polls/delete/:pollId', function(req, res) {
         let isAuth = req.body.isAuth;
 
         if (isAuth == false) {
             res.statusCode = 401;
             return res.json({ title: "Unauthorized Request", message: 'You must be logged in to make changes to any poll data.' });
         }
-        User.findOne({ creatorId: req.params.creatorId })
-            .then(user => {
-                user.polls.pull({_id: req.body.pollId});
-                user.save(function(err) {
-                    if (err) {
-                        res.statusCode = 500;
-                        return res.json({ title: 'Error', message: err });
-                    }
-                    console.log('Successfully Deleted Poll!');
-                    res.json(user);
-                });
-            })
-            .catch(err => {
+        User.update({ "polls._id": req.params.pollId }, {
+            "$pull": {
+                "polls": { "_id": req.params.pollId }
+            }
+        }, function(err, data) {
+            if (err) {
                 res.statusCode = 500;
-                res.json({ title: 'Error', message: err });
-            });
+                return res.json({ title: 'Error', message: err });
+            }
+            res.json(data);
+        });
+
     });
 
     app.use('/api', router);

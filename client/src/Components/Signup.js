@@ -89,7 +89,6 @@ export default class SignUp extends Component {
             isValid = false;
         }
         if(isValid) {
-            console.log({username: this.state.username_field.value, password: this.state.password_field.value})
             newUser({username: this.state.username_field.value, password: this.state.password_field.value}).then(user=> {
                 this.setState({isAuth: true});
                 this.props.updateAuth(true, user.creatorId);
