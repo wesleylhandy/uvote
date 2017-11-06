@@ -68,6 +68,8 @@ export default class Poll extends Component {
                     <button type='submit'>Submit</button>
                 </form>
             )
+        } else if (poll) {
+            return null;
         } else return <div className='no-data'>Poll could not be found in the database. It is possible the creator deleted the poll.</div>
     }
     renderChart(poll){
@@ -126,7 +128,7 @@ export default class Poll extends Component {
                     <hr className={this.state.hasVoted ? '' : 'hidden'}/>
                     {this.renderChart(this.state.poll)}
                     <hr />
-                    <a className="tweet-container" href={`https://twitter.com/intent/tweet?text=${this.state.title}&url=https://u-vote.herokuapp.com${this.state.url}&hashtags=onlinepoll`}>
+                    <a className="tweet-container" href={`https://twitter.com/intent/tweet?text=${this.state.title}&url=${encodeURI(`https://u-vote.herokuapp.com${this.state.url}`)}&hashtags=onlinepoll`}>
                         <TwitterLogo />
                         <div className="tweet-cta">Tweet This Poll</div>
                     </a>
