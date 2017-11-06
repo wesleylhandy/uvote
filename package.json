@@ -45,5 +45,6 @@
     },
     "optionalDependencies": {
         "fsevents": "*"
-    }
+    },
+    "presets": ["env"]
 }
