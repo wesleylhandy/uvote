@@ -10,7 +10,7 @@ const { default: App } = require('./client/src/App');
 require('./config/middleware');
 
 module.exports = function universalLoader(req, res) {
-    cont filePath = path.resolve(__dirname, '..', 'build', 'index.html');
+    const filePath = path.resolve(__dirname, '..', 'build', 'index.html');
     fs.readFile(filePath, 'utf8', (err, htmlData) => {
         if (err) {
             console.error('read err', err)
