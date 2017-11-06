@@ -1,4 +1,6 @@
 // Dependencies
+require('ignore-styles');
+const compression = require('compression');
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
@@ -14,13 +16,19 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
 }
 
+require('babel-register')({
+    ignore: /\/(build|node_modules)\//,
+    presets: ['env', 'react-app']
+});
+
 // set Mongoose promises to es6 promises
 mongoose.Promise = Promise;
 // Initialize Express Server
 const app = express();
 // Specify the port.
 var port = process.env.PORT || 3001;
-
+//support gzip
+app.use(compression());
 // Use morgan for logs 
 app.use(logger("dev"));
 //body parser for routes our app
@@ -83,12 +91,20 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.join(__dirname, 'client/public/index.html'));
     });
 }
+
+//SERVER SIDE RENDERING
+const universalLoader = require('./universal');
+app.use('/', universalLoader);
+
 // Listen on port 3000 or assigned port
 const server = app.listen(app.get('port'), function() {
     console.log(`App running on ${app.get('port')}`);
 });
 
+
+
 // socket.io server for websockets
+//for future development
 /*const io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
