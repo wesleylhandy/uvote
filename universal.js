@@ -7,8 +7,6 @@ const { StaticRouter } = require('react-router-dom')
 
 const { App } = require('./client/src/App');
 
-require('./config/middleware.js');
-
 module.exports = function universalLoader(req, res) {
     
     const filePath = path.join(__dirname, 'client/build/index.html');
@@ -30,7 +28,7 @@ module.exports = function universalLoader(req, res) {
             user = req.session.username, isAuth = !req.session.guest;
         }
 
-        const markup = renderToString(<StaticRouter location = { req.url } context={ context }><App userId={ user } isAuth={ isAuth }/></StaticRouter>)
+        const markup = renderToString(<StaticRouter location={req.url} context={context}><App userId={user} isAuth={isAuth}/></StaticRouter>)
 
         if (context.url) {
             // Somewhere a `<Redirect>` was rendered
