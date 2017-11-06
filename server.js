@@ -86,15 +86,11 @@ require("./controllers/vote-controller.js")(app);
 // Make public a static dir
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
-} else {
-    app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname, 'client/public/index.html'));
-    });
 }
 
 //SERVER SIDE RENDERING
 const universalLoader = require('./universal');
-app.use('/', universalLoader);
+app.get('/', universalLoader);
 
 // Listen on port 3000 or assigned port
 const server = app.listen(app.get('port'), function() {

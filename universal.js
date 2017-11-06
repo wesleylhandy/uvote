@@ -35,8 +35,8 @@ module.exports = function universalLoader(req, res) {
             res.redirect(301, context.url);
         } else {
             // we're good, send the response
-            const RenderedApp = htmlData.replace('{{SSR}}', markup);
-            res.send(RenderedApp);
+            const RenderedApp = htmlData.replace(/({{)((.|\n|\r|\t)*)(}})/gm, markup);
+            res.sendFile(RenderedApp);
         }
     })
 }

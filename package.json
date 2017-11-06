@@ -34,7 +34,8 @@
         "socket.io": "^2.0.3"
     },
     "scripts": {
-        "start": "concurrently \"npm run server\" \"npm run client\"",
+        "start:dev": "concurrently \"NODE_ENV=development nodemon -w server\" \"NODE_ENV=development npm run client\"",
+        "start": "concurrently \"NODE_ENV=production node server\" \"NODE_ENV=production npm run client\"",
         "server": "babel-node server.js",
         "client": "babel-node start-client.js",
         "dev": "echo \"This command has been deprecated. Use 'npm start'\" && exit 1"
@@ -47,8 +48,10 @@
     "optionalDependencies": {
         "fsevents": "*"
     },
-    "presets": [
-        "env",
-        "react-app"
-    ]
+    "babel": {
+        "presets": [
+            "env",
+            "react-app"
+        ]
+    }
 }
