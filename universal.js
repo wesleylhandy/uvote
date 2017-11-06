@@ -1,5 +1,5 @@
 const fs = require('fs')
-
+const path = require('path');
 const React = require('react');
 
 const { renderToString } = require('react-dom/server')
@@ -10,8 +10,8 @@ const { default: App } = require('./client/src/App');
 require('./config/middleware');
 
 module.exports = function universalLoader(req, res) {
-
-    fs.readFile('./client/build/index.html', 'utf8', (err, htmlData) => {
+    cont filePath = path.resolve(__dirname, '..', 'build', 'index.html');
+    fs.readFile(filePath, 'utf8', (err, htmlData) => {
         if (err) {
             console.error('read err', err)
             return res.status(404).end()
