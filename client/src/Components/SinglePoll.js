@@ -12,6 +12,7 @@ export default class Poll extends Component {
             creatorId: props.match.params.id,
             title: props.match.params.title,
             poll: null,
+            url: '',
             userId: props.userId,
             isAuth: props.isAuth,
             hasVoted: false,
@@ -29,7 +30,7 @@ export default class Poll extends Component {
         getSinglePoll(this.state.creatorId, this.state.title)
             .then(res=>{
                 const hasVoted = this.state.hasVoted || res.poll.voters.includes(this.state.userId) ? true : false;
-                this.setState({poll: res.poll, hasVoted: hasVoted});
+                this.setState({poll: res.poll, hasVoted: hasVoted, url: res.poll.url});
             })
             .catch(err=>alert(JSON.stringify(err, null, 2)));
     }
@@ -67,24 +68,11 @@ export default class Poll extends Component {
                     <button type='submit'>Submit</button>
                 </form>
             )
-        } else if (poll && this.state.hasVoted) {
-            return (
-                <div className='poll-display'>
-                    {
-                        poll.inputs.map((input, index)=>{
-                            return (
-                                <div className='option-display-group' key={index}>
-                                    <div>{input.title} - Votes: {input.votes}</div>
-                                </div>
-                            )
-                        })
-                    }
-                </div>
-            )
         } else return <div className='no-data'>Poll could not be found in the database. It is possible the creator deleted the poll.</div>
     }
     renderChart(poll){
         if (poll) {
+            let votes = 0;
             var obj = {
                 labels: [],
                 colors: [],
@@ -95,6 +83,7 @@ export default class Poll extends Component {
                 obj.labels.push(input.title);
                 obj.colors.push(`hsla(${((360 / arr.length) * ind) + 20}, 100%, 45%, 0.9)`);
                 obj.data.push(input.votes);
+                votes += input.votes;
             });
 
             const data = {
@@ -104,8 +93,7 @@ export default class Poll extends Component {
                 }],
                 labels: obj.labels
             }
-
-            return <div className='poll-visualization'><Doughnut data={data} ref='chart' width={400} height={400}/></div>
+            if (votes) return <div className='poll-visualization'><Doughnut data={data} ref='chart' width={400} height={400}/></div>
         
         } else {
             //this should never return....
@@ -131,19 +119,19 @@ export default class Poll extends Component {
     render() {
         
         return (
-            <div className='poll'>
+            <section className='poll'>
                 <div className='poll-title'>{decodeURIComponent(this.state.title)}</div>
                 <div className="poll-container">
                     {this.renderInputs(this.state.poll)}
-                    <hr className={this.state.hasVoted ? 'hidden' : ''}/>
+                    <hr className={this.state.hasVoted ? '' : 'hidden'}/>
                     {this.renderChart(this.state.poll)}
                     <hr />
-                    <div className="tweetContainer">
+                    <a className="tweet-container" href={`https://twitter.com/intent/tweet?text=${this.state.title}&url=${this.state.url}&hashtags=onlinepoll`}>
                         <TwitterLogo />
-                        <div className="tweet-cta">Share This Poll With Your Friends</div>
-                    </div>
+                        <div className="tweet-cta">Tweet This Poll</div>
+                    </a>
                 </div>
-            </div>
+            </section>
         )
     }
 }

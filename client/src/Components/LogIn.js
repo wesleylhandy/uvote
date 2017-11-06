@@ -5,12 +5,12 @@ import { authUser } from '../utils/helpers';
 
 const customStyles = {
     content : {
-      top                   : '25%',
+      top                   : '33%',
       left                  : '50%',
       right                 : 'auto',
       bottom                : 'auto',
       marginRight           : '-50%',
-      transform             : 'translate(-50%, -25%)'
+      transform             : 'translate(-50%, -33%)'
     }
 };
 
@@ -104,7 +104,7 @@ export default class Authentication extends Component {
     render() {
 
         const { from } = this.props.location.state || { from: { pathname: '/' } }
-        const message = from.pathname === '/' ? `'Enter your email address and password'}` : `You must log in to view the page at ${from.pathname}`;
+        const message = from.pathname === '/' ? `Enter your email address and password` : `You must log in to view the page at ${from.pathname}`;
         const redirect = () => {
             if(this.state.isAuth) {return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/portal'}/>}
             else if (!this.state.modalIsOpen) { return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/'}/>}

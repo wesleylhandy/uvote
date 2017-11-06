@@ -35,6 +35,7 @@ export default class PollEditor extends Component {
             pollSaved: false,
             isAuth: props.isAuth,
             options: [],
+            numSavedOptions: 0,
             pollId: props.match.params.pollId || '',
             pollDeleted: false
         }
@@ -47,6 +48,7 @@ export default class PollEditor extends Component {
         this.handleInput = this.handleInput.bind(this);
         this.handleClear = this.handleClear.bind(this);
         this.updatePollData = this.updatePollData.bind(this);
+        this.handleReturn = this.handleReturn.bind(this);
     }
 
     /*** SPECIFIC EVENT HANDLERS ***/
@@ -80,8 +82,7 @@ export default class PollEditor extends Component {
 
     //OPTIONS
     addOptionInput(e){
-        e.preventDefault();
-        
+         
         const option = {
             order: this.state.options.length ? this.state.options[this.state.options.length - 1].order + 1 : 0,
             title: ''
@@ -91,9 +92,7 @@ export default class PollEditor extends Component {
         this.setState({options: arr});
     }
     handleOptionSave(e){
-        e.preventDefault();
-
-        const index = e.target.name;
+        const index = parseInt(e.hasOwnProperty('target') ? e.target.parentNode.id.replace('save', '') : e, 10);
         const options = this.state.options;
         const option = options[index];
 
@@ -126,9 +125,22 @@ export default class PollEditor extends Component {
     }
 
     /*** GENERAL EVENT HANDLERS ***/
+    handleReturn(e){
+        console.log({return:e.key})
+        if(e.target.name === 'title' && e.key === "Enter" ) {
+            e.preventDefault();
+            return this.handleTitleSave(e.target.name);
+        } else if (e.key === "Enter" ) {
+            e.preventDefault();
+            return this.handleOptionSave(e.target.name);
+        }
+
+    }
+
     handleInput(e){
         e.preventDefault();
-        if (e.target.name === 'title') {
+        console.log({input:e.target});
+        if (e.target.name === 'title') { 
             this.setState({title: e.target.value});
         } else {
             const options = this.state.options;
@@ -150,21 +162,21 @@ export default class PollEditor extends Component {
 
     updatePollData(userId, pollId){
         getUnsavedPoll(userId, pollId).then(res => {
-            console.log(res.poll)
             let title = res.poll && res.poll.hasOwnProperty('title') ? res.poll.title : '';
             let titleSaved = title ? true : false;
             let pollURL = res.poll && res.poll.hasOwnProperty('url') ? res.poll.url : '';
-            for (let i = 0; i < res.poll.inputs.length; i++) {
+            let numSavedOptions = res.poll.inputs.length;
+            for (let i = 0; i < numSavedOptions; i++) {
                 res.poll.inputs[i].saved = true;
+
             }
-            this.setState({ title: title, titleSaved: titleSaved, pollURL: pollURL, options: res.poll.inputs, pollId: res.poll._id });
+            this.setState({ title: title, titleSaved: titleSaved, pollURL: pollURL, options: res.poll.inputs, pollId: res.poll._id, numSavedOptions: numSavedOptions });
         }).catch(err => console.error(err));
     }
 
     /*** LIFECYCLE EVENTS ***/
 
     componentDidMount() {
-        console.log(this.props.match.params.pollId);
         if (this.props.match.params.pollId) {
             this.updatePollData(this.state.userId, this.props.match.params.pollId);
         } else {
@@ -185,13 +197,14 @@ export default class PollEditor extends Component {
                                     type='text' 
                                     value={input.title} 
                                     name={input.saved ? "saved" + index : index} 
+                                    onKeyDown={this.handleReturn}
                                     onChange={this.handleInput} 
                                     placeholder={index < 17 || index === 25 ? dummyOptions[index] : 'I give in, just keep adding as many as you like'}
                                     disabled={input.saved ? true : false}
                                 />
-                                <button className={input.saved ? 'hidden' : 'save-button'} onClick={this.handleOptionSave} name={input.saved ? "saved" + index : index}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                                <button className={input.saved ? 'hidden' : 'clear-button'} onClick={this.handleClear} name={input.saved ? "saved" + index : index}>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
-                                <button id={input.hasOwnProperty('_id') ? input._id : 'id'+ index} className='delete-button' onClick={this.handleDeleteOption} name={input.saved ? "saved"  + index : index}>Delete <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button id={'save' + index} className={input.saved ? 'hidden' : 'save-button'} onClick={this.handleOptionSave} name={input.saved ? "saved" + index : index}><i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                <button className={input.saved ? 'hidden' : 'clear-button'} onClick={this.handleClear} name={input.saved ? "saved" + index : index}><i className="fa fa-eraser" aria-hidden="true"></i></button>
+                                <button id={input.hasOwnProperty('_id') ? input._id : 'id'+ index} className='delete-button' onClick={this.handleDeleteOption} name={input.saved ? "saved"  + index : index}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
                             </div>
                         )
                   })
@@ -201,40 +214,34 @@ export default class PollEditor extends Component {
         }
     }
 
-    renderSaveButton(options){
-        let len = 0;
-        for(let i=0; i < options.length; i++) {
-            if (options[i].saved) len ++
-            if(len > 1) return <button className='save-button' onClick={this.handleSavePoll}>Save Poll <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-        }
-        return        
-    }
-
     render() {
         if(this.props.userId && this.props.isAuth) {
             if(!this.state.pollSaved && !this.state.pollDeleted) {
                 return (
                     <div className='poll-editor'>
                         <div className="title-input-group">
-                            <label htmlFor="title">Title <i className="fa fa-question" aria-hidden="true"></i></label>
+                            <label htmlFor="title">Title</label>
                             <input 
                                 type="text" 
                                 value={this.state.title} 
                                 name='title' 
-                                placeholder='Who do you want to be your captain?' 
+                                placeholder='Who do you want to be your captain?'
+                                onKeyDown={this.handleReturn} 
                                 onChange={this.handleInput} 
                                 disabled={this.state.titleSaved ? true : false}
                             />
-                            <button className={this.state.titleSaved ? 'hidden' : 'save-button'} onClick={this.handleTitleSave}>Save <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
-                            <button className={this.state.titleSaved ? 'hidden' : 'clear-button'} onClick={this.handleClear} name='title'>Clear <i className="fa fa-eraser" aria-hidden="true"></i></button>
+                            <button className={this.state.titleSaved ? 'hidden' : 'save-button'} onClick={this.handleTitleSave}><i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                            <button className={this.state.titleSaved ? 'hidden' : 'clear-button'} onClick={this.handleClear} name='title'><i className="fa fa-eraser" aria-hidden="true"></i></button>
                             
                         </div>
                         <div className="option-inputs">
                             {this.renderOptions(this.state.options)}
                             <div className="poll-controls">
-                                <button className='add-button' onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
-                                {this.renderSaveButton(this.state.options)}
-                                <button className='delete-button' onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                                <button className={this.state.options.length === this.state.numSavedOptions ? 'add-button' : 'hidden'} onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                                <div className="save-delete">
+                                    <button className={this.state.numSavedOptions >=2 && this.state.options.length === this.state.numSavedOptions ? 'save-button' : 'hidden'} onClick={this.handleSavePoll}>Save Poll <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                    <button className='delete-button' onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>

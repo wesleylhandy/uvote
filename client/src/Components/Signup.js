@@ -5,12 +5,12 @@ import { newUser } from '../utils/helpers';
 
 const customStyles = {
     content : {
-      top                   : '25%',
+      top                   : '33%',
       left                  : '50%',
       right                 : 'auto',
       bottom                : 'auto',
       marginRight           : '-50%',
-      transform             : 'translate(-50%, -25%)'
+      transform             : 'translate(-50%, -33%)'
     }
 };
 
