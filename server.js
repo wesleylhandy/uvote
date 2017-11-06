@@ -57,14 +57,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //middleware to display session data in console - remove for production
-app.use(function(req, res, next) {
-    console.log('**************************');
-    console.log(req.session);
-    console.log('**************************');
-    console.log({ loggedin: req.user ? true : false });
-    console.log('**************************');
-    next();
-})
+if (process.env.NODE_ENV !== 'production') {
+    app.use(function(req, res, next) {
+        console.log('**************************');
+        console.log(req.session);
+        console.log('**************************');
+        console.log({ loggedin: req.user ? true : false });
+        console.log('**************************');
+        next();
+    })
+}
 
 //set up passport for user authentication
 const passportConfig = require('./config/passport');
@@ -87,7 +89,7 @@ const server = app.listen(app.get('port'), function() {
 });
 
 // socket.io server for websockets
-const io = require('socket.io')(server);
+/*const io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
     console.log('a user connected');
@@ -114,4 +116,4 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
-});
+});*/

@@ -126,7 +126,7 @@ export default class Poll extends Component {
                     <hr className={this.state.hasVoted ? '' : 'hidden'}/>
                     {this.renderChart(this.state.poll)}
                     <hr />
-                    <a className="tweet-container" href={`https://twitter.com/intent/tweet?text=${this.state.title}&url=${this.state.url}&hashtags=onlinepoll`}>
+                    <a className="tweet-container" href={`https://twitter.com/intent/tweet?text=${this.state.title}&url=https://u-vote.herokuapp.com${this.state.url}&hashtags=onlinepoll`}>
                         <TwitterLogo />
                         <div className="tweet-cta">Tweet This Poll</div>
                     </a>
