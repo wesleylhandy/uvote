@@ -11,6 +11,7 @@ require('./config/middleware');
 
 module.exports = function universalLoader(req, res) {
     const filePath = path.resolve(__dirname, '..', 'build', 'index.html');
+    console.log(filePath);
     fs.readFile(filePath, 'utf8', (err, htmlData) => {
         if (err) {
             console.error('read err', err)
