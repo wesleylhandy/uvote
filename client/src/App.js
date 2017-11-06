@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
   Route,
-  Link
+  Link,
+  Switch
 } from 'react-router-dom';
 
 
@@ -17,6 +18,8 @@ import AllUserPolls from './Components/AllUserPolls';
 import UserIncompletePolls from './Components/UserIncompletePolls';
 import UserCompletePolls from './Components/UserCompletePolls';
 import SearchPolls from './Components/SearchPolls';
+import Home from './Components/Home';
+import NoMatch from './Components/NoMatch';
 
 import {getSession} from './utils/helpers';
 
@@ -25,8 +28,8 @@ export default class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isAuth: false,
-            userId: null
+            isAuth: props.isAuth,
+            userId: props.userId
         }
         this.updateAuth = this.updateAuth.bind(this);
 
@@ -74,15 +77,19 @@ export default class App extends Component {
                 <main>
                     {this.renderPortal(this.state.isAuth)}
                     <div className="container">
-                        <Route exact path="/portal" render={props => <PortalMessage userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
-                        <Route exact path="/polls" component={AllPolls}/>
-                        <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
-                        <Route path="/edit/my/:pollId" render={props=> <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
-                        <Route exact path='/create/new' render={props => <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
-                        <Route exact path='/all/my' render={props => <AllUserPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
-                        <Route exact path='/incomplete/my' render={props => <UserIncompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
-                        <Route exact path='/complete/my' render={props => <UserCompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
-                        <Route exact path='/search/:userId/:terms' render={props => <SearchPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                        <Switch>
+                            <Route exact path="/" component={Home}/>
+                            <Route exact path="/portal" render={props => <PortalMessage userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
+                            <Route exact path="/polls" component={AllPolls}/>
+                            <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
+                            <Route path="/edit/my/:pollId" render={props=> <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route exact path='/create/new' render={props => <PollEditor isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route exact path='/all/my' render={props => <AllUserPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route exact path='/incomplete/my' render={props => <UserIncompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route exact path='/complete/my' render={props => <UserCompletePolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route exact path='/search/:userId/:terms' render={props => <SearchPolls isAuth={this.state.isAuth} userId={this.state.userId} {...props}/>}/>
+                            <Route path='/*' component={NoMatch}/>
+                        </Switch>
                     </div>
                 </main>
                 <footer>

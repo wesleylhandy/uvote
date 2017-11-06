@@ -9,6 +9,13 @@
         width: 90%;
         margin: 0 auto;
     }
+    /****   HOME    ****/
+    
+    .welcome {
+        font-size: 34px;
+        text-align: center;
+        margin: 30px auto;
+    }
     /*****  HEADER  *****/
     
     header nav>ul {
@@ -425,7 +432,9 @@
             margin-left: 22.5%;
             text-align: left;
         }
-        .user-id {
+        .user-id,
+        .no-match,
+        .welcome {
             font-size: 16px;
             width: 90%;
             margin: 30px auto;
