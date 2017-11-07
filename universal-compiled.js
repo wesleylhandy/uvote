@@ -18,7 +18,7 @@ var _server = require('react-dom/server');
 
 var _reactRouterDom = require('react-router-dom');
 
-var _App = require('./client/lib/App.js');
+var _App = require('./client/src/App.js');
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -29,7 +29,7 @@ module.exports = function universalLoader(req, res) {
 
     var filePath = _path2.default.join(__dirname, 'client/build/index.html');
 
-    _fs2.default.readFile(filePath, 'utf8', function(err, htmlData) {
+    _fs2.default.readFile(filePath, 'utf8', function (err, htmlData) {
         if (err) {
             console.error('read err', err);
             return res.status(404).end();
@@ -47,19 +47,14 @@ module.exports = function universalLoader(req, res) {
         console.log({ App: _App2.default });
 
         var markup = (0, _server.renderToString)(_react2.default.createElement(
-            _reactRouterDom.StaticRouter, {
-                location: req.url,
-                context: context,
-                __source: {
+            _reactRouterDom.StaticRouter,
+            { location: req.url, context: context, __source: {
                     fileName: _jsxFileName,
                     lineNumber: 31
                 },
                 __self: _this
             },
-            _react2.default.createElement(_App2.default, {
-                userId: user,
-                isAuth: isAuth,
-                __source: {
+            _react2.default.createElement(_App2.default, { userId: user, isAuth: isAuth, __source: {
                     fileName: _jsxFileName,
                     lineNumber: 32
                 },

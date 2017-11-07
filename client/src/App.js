@@ -28,11 +28,10 @@ export default class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isAuth: props.isAuth,
+            isAuth: !!props.isAuth,
             userId: props.userId
         }
         this.updateAuth = this.updateAuth.bind(this);
-
     }
 
     updateAuth(bool, creatorId) {
@@ -41,12 +40,12 @@ export default class App extends Component {
 
 
     renderLoginControl = (auth) => {
-        if (auth) return <Link to='/logout'>Logout</Link>
+        if (auth == true) return <Link to='/logout'>Logout</Link>
         else return <div className='login-links'><Link to='/login'>Login</Link><Link to='/signup'>Signup</Link></div>
     }
 
     renderPortal = (auth) => {
-        if (auth) return <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} />
+        if (auth == true) return <UserPortal isAuth={this.state.isAuth} userId={this.state.userId} />
         else return null;
     }
 
