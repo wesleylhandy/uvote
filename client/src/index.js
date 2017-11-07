@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/index.css';
 
-const Router = () => <BrowserRouter><App/></BrowserRouter>;
+const Router = () => <BrowserRouter><App userId='' isAuth='false'/></BrowserRouter>;
 
 ReactDOM.render( <Router /> ,
     document.getElementById('root')

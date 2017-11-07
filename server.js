@@ -1,5 +1,4 @@
 // Dependencies
-require('ignore-styles');
 const compression = require('compression');
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -89,8 +88,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 //SERVER SIDE RENDERING
-const universalLoader = require('./universal');
-app.get('/', universalLoader);
+const universalLoader = require('./universal.js');
+app.use('/', universalLoader);
 
 // Listen on port 3000 or assigned port
 const server = app.listen(app.get('port'), function() {

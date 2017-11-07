@@ -1,34 +1,37 @@
-const fs = require('fs')
-const path = require('path');
-const React = require('react');
+import fs from 'fs'
+import path from 'path'
+import React from 'react';
 
-const { renderToString } = require('react-dom/server')
-const { StaticRouter } = require('react-router-dom')
+import { renderToString }  from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom';
 
-const { App } = require('./client/src/App');
+import App from './client/src/App.js';
 
-module.exports = function universalLoader(req, res) {
-    
+module.exports = function universalLoader (req, res) {
+
     const filePath = path.join(__dirname, 'client/build/index.html');
     
-    console.log(filePath);
-
     fs.readFile(filePath, 'utf8', (err, htmlData) => {
         if (err) {
             console.error('read err', err)
             return res.status(404).end()
         }
         const context={};
-        console.log('success reading file');
 
         let user = '', isAuth = false;
         if (req.isAuthenticated()) {
-            user = req.user, isAuth = !req.session.guest;
+            user = req.user, isAuth = true;
         } else {
-            user = req.session.username, isAuth = !req.session.guest;
+            user = req.session.username, isAuth = false;
         }
 
-        const markup = renderToString(<StaticRouter location={req.url} context={context}><App userId={user} isAuth={isAuth}/></StaticRouter>)
+        console.log({App});
+
+        const markup = renderToString(
+            <StaticRouter location={req.url} context={context}>
+                <App userId={user} isAuth={isAuth}/>
+            </StaticRouter>
+        );
 
         if (context.url) {
             // Somewhere a `<Redirect>` was rendered
@@ -36,7 +39,7 @@ module.exports = function universalLoader(req, res) {
         } else {
             // we're good, send the response
             const RenderedApp = htmlData.replace(/({{)((.|\n|\r|\t)*)(}})/gm, markup);
-            res.sendFile(RenderedApp);
+            res.send(RenderedApp);
         }
     })
 }
