@@ -13,12 +13,13 @@ const MongoStore = require('connect-mongo')(session);
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').load();
+    require('babel-register')({
+        ignore: /\/(build|node_modules)\//,
+        presets: ['env', 'react-app']
+    });
 }
 
-require('babel-register')({
-    ignore: /\/(build|node_modules)\//,
-    presets: ['env', 'react-app']
-});
+
 
 // set Mongoose promises to es6 promises
 mongoose.Promise = Promise;
@@ -88,7 +89,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 //SERVER SIDE RENDERING
-const universalLoader = require('./universal.js');
+const universalLoader = require('./universal-compiled.js');
 app.use('/', universalLoader);
 
 // Listen on port 3000 or assigned port
