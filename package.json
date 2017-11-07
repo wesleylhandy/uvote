@@ -34,7 +34,7 @@
         "socket.io": "^2.0.3"
     },
     "scripts": {
-        "build": "NODE_ENV=development babel universal.js -o universal-compilded.js",
+        "build": "NODE_ENV=development babel universal.js -o universal-compiled.js && NODE_ENV=development babel client/src -d lib --ignore *.test.js",
         "start:dev": "concurrently \"NODE_ENV=development nodemon --watch server\" \"NODE_ENV=development npm run client\"",
         "start": "concurrently \"NODE_ENV=production npm run server\" \"NODE_ENV=production npm run client\"",
         "server": "node server.js",
