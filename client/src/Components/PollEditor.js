@@ -55,7 +55,6 @@ export default class PollEditor extends Component {
     // TITLE
     handleTitleSave(e) {
         e.preventDefault();
-
         addTitle(this.state.userId, this.state.pollId, this.state.title, this.state.isAuth)
             .then(res=>{console.log('Title Saved'); this.setState({titleSaved: true, pollURL:res.poll.url })})
             .catch(err=>console.error(err));
@@ -65,10 +64,7 @@ export default class PollEditor extends Component {
         e.preventDefault();
 
         deletePoll(this.state.pollId, this.state.userId, this.state.isAuth)
-            .then(res=>{
-                console.log(res);
-                this.setState({pollDeleted: true});
-            })
+            .then(res=>this.setState({pollDeleted: true}))
             .catch(err=>console.error(err));
     }
 
@@ -76,7 +72,7 @@ export default class PollEditor extends Component {
         e.preventDefault()
 
         savePoll(this.state.userId, this.state.pollId, this.state.isAuth)
-            .then(success=>{ console.log('Poll Saved'); this.setState({pollSaved: true})})
+            .then(success=>this.setState({pollSaved: true}))
             .catch(err=>console.error(err));
     }
 
@@ -116,17 +112,13 @@ export default class PollEditor extends Component {
         } else {
             let inputId = e.target.id;
             deleteOption(this.state.userId, this.state.pollId, inputId, this.state.isAuth)
-                .then(res=>{
-                    console.log(res);
-                    this.updatePollData(this.state.userId, this.state.pollId);
-                })
+                .then(res=>this.updatePollData(this.state.userId, this.state.pollId))
                 .catch(err=>console.error(err));
         }
     }
 
     /*** GENERAL EVENT HANDLERS ***/
     handleReturn(e){
-        console.log({return:e.key})
         if(e.target.name === 'title' && e.key === "Enter" ) {
             e.preventDefault();
             return this.handleTitleSave(e.target.name);
@@ -134,7 +126,6 @@ export default class PollEditor extends Component {
             e.preventDefault();
             return this.handleOptionSave(e.target.name);
         }
-
     }
 
     handleInput(e){
@@ -168,7 +159,6 @@ export default class PollEditor extends Component {
             let numSavedOptions = res.poll.inputs.length;
             for (let i = 0; i < numSavedOptions; i++) {
                 res.poll.inputs[i].saved = true;
-
             }
             this.setState({ title: title, titleSaved: titleSaved, pollURL: pollURL, options: res.poll.inputs, pollId: res.poll._id, numSavedOptions: numSavedOptions });
         }).catch(err => console.error(err));

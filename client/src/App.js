@@ -78,6 +78,9 @@ export default class App extends Component {
                     <div className="container">
                         <Switch>
                             <Route exact path="/" component={Home}/>
+                            <Route exact path='/login' component={Home}/>
+                            <Route exact path='/logout' component={Home}/>
+                            <Route exact path='/signup' component={Home}/>
                             <Route exact path="/portal" render={props => <PortalMessage userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>
                             <Route exact path="/polls" component={AllPolls}/>
                             <Route path="/polls/single/:id/:title" render={props=> <SinglePoll userId={this.state.userId} isAuth={this.state.isAuth} {...props}/>}/>

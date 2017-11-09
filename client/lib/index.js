@@ -30,7 +30,7 @@ var Router = function Router() {
             },
             __self: undefined
         },
-        _react2.default.createElement(_App2.default, { userId: '', isAuth: 'false', __source: {
+        _react2.default.createElement(_App2.default, { userId: '', isAuth: false, __source: {
                 fileName: _jsxFileName,
                 lineNumber: 7
             },
