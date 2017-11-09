@@ -7,17 +7,19 @@ const User = require('../models/User');
 module.exports = function(app) {
 
     router.get('/session', function(req, res) {
-        //log of session data retrieved from request for setting state
-        console.log('-------------------');
-        console.log({ authenticated: req.isAuthenticated() });
-        console.log({ user: req.user });
-        console.log({ guest: req.session.guest });
-        console.log({ guestUser: req.session.username });
-        console.log('-------------------');
+        if (process.env.NODE_ENV !== 'production') {
+            //log of session data retrieved from request for setting state
+            console.log('----------/api/session----------');
+            console.log({ authenticated: req.isAuthenticated() });
+            console.log({ user: req.user });
+            console.log({ guest: req.session.guest });
+            console.log({ guestUser: req.session.username });
+            console.log('--------------------------------');
+        }
 
         if (req.isAuthenticated()) {
-            res.json({ user: req.user, isAuth: !req.session.guest })
-        } else res.json({ user: req.session.username, isAuth: !req.session.guest })
+            res.json({ user: req.user, isAuth: true })
+        } else res.json({ user: req.session.username, isAuth: false })
     })
 
     // sign-up new user

@@ -140,7 +140,7 @@ var App = function (_Component) {
         };
 
         _this.state = {
-            isAuth: !!props.isAuth,
+            isAuth: props.isAuth == "false" ? false : true,
             userId: props.userId
         };
         _this.updateAuth = _this.updateAuth.bind(_this);

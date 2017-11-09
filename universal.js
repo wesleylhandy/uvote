@@ -28,14 +28,8 @@ module.exports = function universalLoader(req, res) {
 
         console.log({ App });
 
-        const markup = renderToString( <
-            StaticRouter location = { req.url }
-            context = { context } >
-            <
-            App userId = { user }
-            isAuth = { isAuth }
-            /> <
-            /StaticRouter>
+        const markup = renderToString( <StaticRouter location={ req.url } context={ context }>
+            <App userId={ user } isAuth={ isAuth }/> </StaticRouter>
         );
 
         if (context.url) {

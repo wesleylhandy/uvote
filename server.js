@@ -19,8 +19,6 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-
-
 // set Mongoose promises to es6 promises
 mongoose.Promise = Promise;
 // Initialize Express Server
@@ -67,11 +65,14 @@ app.use(passport.session());
 //middleware to display session data in console - remove for production
 if (process.env.NODE_ENV !== 'production') {
     app.use(function(req, res, next) {
-        console.log('**************************');
+        console.log('');
+        console.log('*************SESSION MIDDLEWARE***************');
         console.log(req.session);
-        console.log('**************************');
-        console.log({ loggedin: req.user ? true : false });
-        console.log('**************************');
+        console.log('');
+        console.log('Logged In: ');
+        console.log('__________ ' + req.isAuthenticated());
+        console.log('**********************************************');
+        console.log('');
         next();
     })
 }

@@ -36,11 +36,19 @@ export default class SignUp extends Component {
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInput = this.handleInput.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
 
     closeModal(){
         this.setState({modalIsOpen: false});
+    }
+
+    handleDelete(e) {
+        if (e.key === "Backspace") {
+            e.preventDefault();
+            this.setState({ password_field: { value: this.state.password_field.value.slice(0, -1), error_label: '', validation: '', status: 'valid' }, dots: this.state.dots.slice(0, -1) });
+        }
     }
 
     handleInput(e) {
@@ -147,7 +155,7 @@ export default class SignUp extends Component {
                             <div className='required'>{this.state.password_field.error_label}</div>
                             <label htmlFor="password"><i className="fa fa-key" aria-hidden="true"></i></label>
                             <div className={this.state.password_field.status !== 'error' ? 'hidden' : 'validation'} required>{this.state.password_field.validation}</div>
-                            <input type='text' name='password' placeholder='ex: abc123D$' value={this.state.dots} onChange={this.handleInput}/>
+                            <input type='text' name='password' placeholder='ex: abc123D$' value={this.state.dots} onChange={this.handleInput} onKeyDown={this.handleDelete}/>
                         </div>
                         <button onClick={ this.handleSubmit }>Sign Up</button> 
                     </form>
