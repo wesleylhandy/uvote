@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Link} from 'react-router-dom';
 import { newUser } from '../utils/helpers';
 
 const customStyles = {
@@ -159,6 +159,7 @@ export default class SignUp extends Component {
                         </div>
                         <button onClick={ this.handleSubmit }>Sign Up</button> 
                     </form>
+                    <Link to='/login'>Click here to login</Link>
                 </Modal>
                 {redirect()}
             </section>

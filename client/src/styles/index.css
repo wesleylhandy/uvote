@@ -166,6 +166,22 @@
         background: orangered;
         border-color: firebrick;
     }
+
+    .ReactModal__Content a {
+        display: block;
+        width: 100%;
+        color: indigo;
+        margin-bottom: 10px;
+        font-size:16px;
+        text-align: right;
+        text-decoration:none;
+    }
+
+    .ReactModal__Content a:hover {
+        text-decoration: underline;
+        transform: scale(1.2);
+        color: darkmagenta;
+    }
     
     @media screen and (max-width: 1365px) {
         .ReactModal__Content {
@@ -199,6 +215,23 @@
         .ReactModal__Content form,
         .ReactModal__Content p {
             width: 95%;
+        }
+    }
+
+    @media screen and (max-width:440px) {
+        .ReactModal__Content button,
+        form button,
+        .ReactModal__Content form .form-group label,
+        .ReactModal__Content form .form-group input,
+        .ReactModal__Content p {
+            font-size: 16px;
+        }
+        .ReactModal__Content form .form-group label {
+            padding: 20px;
+        }
+        .ReactModal__Content form .form-group input {
+            flex: unset;
+            width: calc(100% - 70px);
         }
     }
     /****   ALL POLLS   ****/
