@@ -179,7 +179,6 @@
 
     .ReactModal__Content a:hover {
         text-decoration: underline;
-        transform: scale(1.2);
         color: darkmagenta;
     }
     
