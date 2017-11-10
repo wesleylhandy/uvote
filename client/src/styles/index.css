@@ -88,6 +88,7 @@
             width: 100%;
             padding: 40px 0;
             display: block;
+            font-size:16px;
         }
     }
     /****   LOGIN/LOGOUT MODAL  ****/
@@ -386,12 +387,12 @@
     }
     
     .portal-section .user-options a button {
-        width: 100%;
         height: 48px;
         border: none;
         margin: 0 auto;
         text-align: center;
         background: transparent;
+        width: 100%;
     }
     
     .portal-section .user-options .input-group button:hover,
@@ -436,6 +437,7 @@
             margin: 0;
             margin-left: 22.5%;
             text-align: left;
+            width: auto;
         }
         .user-id,
         .no-match,
@@ -443,6 +445,12 @@
             font-size: 16px;
             width: 90%;
             margin: 30px auto;
+        }
+    }
+
+    @media screen and (max-width: 350px) {
+        .portal-section .user-options a {
+            font-size:14px;
         }
     }
     /*****  POLL EDITOR *****/
@@ -540,6 +548,24 @@
             width: 140px;
             margin: 5px;
             font-size: 16px;
+        }
+    }
+
+    @media screen and (max-width: 420px) {
+        .poll-editor .title-input-group, 
+        .poll-editor .option-inputs .option-input-group {
+            flex-wrap: wrap;
+        }
+        .poll-editor .title-input-group label,
+        .poll-editor .option-inputs .option-input-group label {
+            width: 100%;
+            text-align: left;
+            padding: 0;
+        }
+        .poll-editor .title-input-group input,
+        .poll-editor .option-inputs .option-input-group input {
+            width:100%;
+            flex:unset;
         }
     }
     /****   SOCIAL MEDIA  ****/
