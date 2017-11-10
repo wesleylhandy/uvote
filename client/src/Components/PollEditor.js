@@ -70,10 +70,11 @@ export default class PollEditor extends Component {
 
     handleSavePoll(e) {
         e.preventDefault()
-
+        if(this.state.titleSaved) {
         savePoll(this.state.userId, this.state.pollId, this.state.isAuth)
             .then(success=>this.setState({pollSaved: true}))
             .catch(err=>console.error(err));
+        } else alert("Please save all the elements of your poll before saving the entire poll.")
     }
 
     //OPTIONS
@@ -229,7 +230,7 @@ export default class PollEditor extends Component {
                             <div className="poll-controls">
                                 <button className={this.state.options.length === this.state.numSavedOptions ? 'add-button' : 'hidden'} onClick={this.addOptionInput}>New Option <i className="fa fa-plus-square-o" aria-hidden="true"></i></button>
                                 <div className="save-delete">
-                                    <button className={this.state.numSavedOptions >=2 && this.state.options.length === this.state.numSavedOptions ? 'save-button' : 'hidden'} onClick={this.handleSavePoll}>Save Poll <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                    <button className={this.state.titleSaved && this.state.numSavedOptions >=2 && this.state.options.length === this.state.numSavedOptions ? 'save-button' : 'hidden'} onClick={this.handleSavePoll}>Save Poll <i className="fa fa-floppy-o" aria-hidden="true"></i></button>
                                     <button className='delete-button' onClick={this.handleDeletePoll}>Delete Poll <i className="fa fa-trash-o" aria-hidden="true"></i></button>
                                 </div>
                             </div>
