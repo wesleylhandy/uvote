@@ -4,6 +4,7 @@ import {
   Link,
   Switch
 } from 'react-router-dom';
+import moment from 'moment';
 
 
 import LogIn from './Components/LogIn';
@@ -29,7 +30,8 @@ export default class App extends Component {
         super(props)
         this.state = {
             isAuth: props.isAuth == "false" ? false : true,
-            userId: props.userId
+            userId: props.userId,
+            stars: 0
         }
         this.updateAuth = this.updateAuth.bind(this);
     }
@@ -41,7 +43,7 @@ export default class App extends Component {
 
     renderLoginControl = (auth) => {
         if (auth) return <Link to='/logout'>Logout</Link>
-        else return <div className='login-links'><Link to='/login'>Login</Link><Link to='/signup'>Signup</Link></div>
+        else return <div className='login-links'><Link to='/login'>Log In</Link><Link to='/signup'>Sign Up</Link></div>
     }
 
     renderPortal = (auth) => {
@@ -55,11 +57,14 @@ export default class App extends Component {
                 this.setState({userId: res.user, isAuth: res.isAuth})
             })
             .catch(err=>console.error(err));
+        fetch('https://github.com/wesleylhandy/uvote').then(response=> response.json()).then(data=>{
+            this.setState({stars: data.stargazers_count})
+        });
     }
 
     render() {
         return ( 
-            <div>
+            <div className='site flex flex-column'>
                 <header>
                     <nav>
                         <ul>
@@ -73,7 +78,7 @@ export default class App extends Component {
                     <Route path='/logout' render={props=> <LogOut isAuth={this.state.isAuth} updateAuth={this.updateAuth} {...props}/>}/>
                     <Route path='/signup'render={props=> <SignUp isAuth={this.state.isAuth} updateAuth={this.updateAuth} {...props}/>}/>
                 </header>
-                <main>
+                <main className='flex-grow'>
                     {this.renderPortal(this.state.isAuth)}
                     <div className="container">
                         <Switch>
@@ -95,7 +100,16 @@ export default class App extends Component {
                     </div>
                 </main>
                 <footer>
-                    <div className='container'></div>
+                    <div className='container'>
+                        <div className="flex flex-row flex-around flex-wrap">
+                            <div className='copyright-group'>
+                                <i className="fa fa-copyright" aria-hidden="true"></i>&nbsp;{moment().format('YYYY')}&nbsp;<a href="http://www.wesleylhandy.net" target="_blank">Wesley L. Handy</a>
+                            </div>
+                            <div className='github-group'>
+                                <a className="github-button" href="https://github.com/wesleylhandy/uvote" data-show-count="true" aria-label="Star ntkme/github-buttons on GitHub" target="_blank">Star</a>
+                            </div>
+                        </div>
+                    </div>
                 </footer>
             </div>
         )

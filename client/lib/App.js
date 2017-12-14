@@ -13,6 +13,10 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterDom = require('react-router-dom');
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 var _LogIn = require('./Components/LogIn');
 
 var _LogIn2 = _interopRequireDefault(_LogIn);
@@ -90,11 +94,11 @@ var App = function (_Component) {
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
         _this.renderLoginControl = function (auth) {
-            if (auth == true) return _react2.default.createElement(
+            if (auth) return _react2.default.createElement(
                 _reactRouterDom.Link,
                 { to: '/logout', __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 43
+                        lineNumber: 45
                     },
                     __self: _this2
                 },
@@ -103,7 +107,7 @@ var App = function (_Component) {
                 'div',
                 { className: 'login-links', __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 44
+                        lineNumber: 46
                     },
                     __self: _this2
                 },
@@ -111,29 +115,29 @@ var App = function (_Component) {
                     _reactRouterDom.Link,
                     { to: '/login', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 44
+                            lineNumber: 46
                         },
                         __self: _this2
                     },
-                    'Login'
+                    'Log In'
                 ),
                 _react2.default.createElement(
                     _reactRouterDom.Link,
                     { to: '/signup', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 44
+                            lineNumber: 46
                         },
                         __self: _this2
                     },
-                    'Signup'
+                    'Sign Up'
                 )
             );
         };
 
         _this.renderPortal = function (auth) {
-            if (auth == true) return _react2.default.createElement(_UserPortal2.default, { isAuth: _this.state.isAuth, userId: _this.state.userId, __source: {
+            if (auth) return _react2.default.createElement(_UserPortal2.default, { isAuth: _this.state.isAuth, userId: _this.state.userId, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 48
+                    lineNumber: 50
                 },
                 __self: _this2
             });else return null;
@@ -141,7 +145,8 @@ var App = function (_Component) {
 
         _this.state = {
             isAuth: props.isAuth == "false" ? false : true,
-            userId: props.userId
+            userId: props.userId,
+            stars: 0
         };
         _this.updateAuth = _this.updateAuth.bind(_this);
         return _this;
@@ -162,6 +167,11 @@ var App = function (_Component) {
             }).catch(function (err) {
                 return console.error(err);
             });
+            fetch('https://github.com/wesleylhandy/uvote').then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                _this3.setState({ stars: data.stargazers_count });
+            });
         }
     }, {
         key: 'render',
@@ -170,10 +180,9 @@ var App = function (_Component) {
 
             return _react2.default.createElement(
                 'div',
-                {
-                    __source: {
+                { className: 'site flex flex-column', __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 62
+                        lineNumber: 67
                     },
                     __self: this
                 },
@@ -182,7 +191,7 @@ var App = function (_Component) {
                     {
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 63
+                            lineNumber: 68
                         },
                         __self: this
                     },
@@ -191,7 +200,7 @@ var App = function (_Component) {
                         {
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 64
+                                lineNumber: 69
                             },
                             __self: this
                         },
@@ -200,7 +209,7 @@ var App = function (_Component) {
                             {
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 65
+                                    lineNumber: 70
                                 },
                                 __self: this
                             },
@@ -209,7 +218,7 @@ var App = function (_Component) {
                                 {
                                     __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 66
+                                        lineNumber: 71
                                     },
                                     __self: this
                                 },
@@ -220,7 +229,7 @@ var App = function (_Component) {
                                 {
                                     __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 68
+                                        lineNumber: 73
                                     },
                                     __self: this
                                 },
@@ -228,7 +237,7 @@ var App = function (_Component) {
                                     _reactRouterDom.Link,
                                     { to: '/polls', __source: {
                                             fileName: _jsxFileName,
-                                            lineNumber: 68
+                                            lineNumber: 73
                                         },
                                         __self: this
                                     },
@@ -240,7 +249,7 @@ var App = function (_Component) {
                                 {
                                     __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 69
+                                        lineNumber: 74
                                     },
                                     __self: this
                                 },
@@ -248,7 +257,7 @@ var App = function (_Component) {
                                     _reactRouterDom.Link,
                                     { to: '/portal', __source: {
                                             fileName: _jsxFileName,
-                                            lineNumber: 69
+                                            lineNumber: 74
                                         },
                                         __self: this
                                     },
@@ -261,13 +270,13 @@ var App = function (_Component) {
                             return _react2.default.createElement(_LogIn2.default, Object.assign({ isAuth: _this4.state.isAuth, updateAuth: _this4.updateAuth }, props, {
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 72
+                                    lineNumber: 77
                                 },
                                 __self: _this4
                             }));
                         }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 72
+                            lineNumber: 77
                         },
                         __self: this
                     }),
@@ -275,13 +284,13 @@ var App = function (_Component) {
                             return _react2.default.createElement(_LogOut2.default, Object.assign({ isAuth: _this4.state.isAuth, updateAuth: _this4.updateAuth }, props, {
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 73
+                                    lineNumber: 78
                                 },
                                 __self: _this4
                             }));
                         }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 73
+                            lineNumber: 78
                         },
                         __self: this
                     }),
@@ -289,23 +298,22 @@ var App = function (_Component) {
                             return _react2.default.createElement(_Signup2.default, Object.assign({ isAuth: _this4.state.isAuth, updateAuth: _this4.updateAuth }, props, {
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 74
+                                    lineNumber: 79
                                 },
                                 __self: _this4
                             }));
                         }, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 74
+                            lineNumber: 79
                         },
                         __self: this
                     })
                 ),
                 _react2.default.createElement(
                     'main',
-                    {
-                        __source: {
+                    { className: 'flex-grow', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 76
+                            lineNumber: 81
                         },
                         __self: this
                     },
@@ -314,7 +322,7 @@ var App = function (_Component) {
                         'div',
                         { className: 'container', __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 78
+                                lineNumber: 83
                             },
                             __self: this
                         },
@@ -323,122 +331,36 @@ var App = function (_Component) {
                             {
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 79
+                                    lineNumber: 84
                                 },
                                 __self: this
                             },
                             _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Home2.default, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 80
-                                },
-                                __self: this
-                            }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/portal', render: function render(props) {
-                                    return _react2.default.createElement(_PortalMessage2.default, Object.assign({ userId: _this4.state.userId, isAuth: _this4.state.isAuth }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 81
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 81
-                                },
-                                __self: this
-                            }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/polls', component: _AllPolls2.default, __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 82
-                                },
-                                __self: this
-                            }),
-                            _react2.default.createElement(_reactRouterDom.Route, { path: '/polls/single/:id/:title', render: function render(props) {
-                                    return _react2.default.createElement(_SinglePoll2.default, Object.assign({ userId: _this4.state.userId, isAuth: _this4.state.isAuth }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 83
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 83
-                                },
-                                __self: this
-                            }),
-                            _react2.default.createElement(_reactRouterDom.Route, { path: '/edit/my/:pollId', render: function render(props) {
-                                    return _react2.default.createElement(_PollEditor2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 84
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
-                                    fileName: _jsxFileName,
-                                    lineNumber: 84
-                                },
-                                __self: this
-                            }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/create/new', render: function render(props) {
-                                    return _react2.default.createElement(_PollEditor2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 85
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
-                                    fileName: _jsxFileName,
                                     lineNumber: 85
                                 },
                                 __self: this
                             }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/all/my', render: function render(props) {
-                                    return _react2.default.createElement(_AllUserPolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 86
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/login', component: _Home2.default, __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 86
                                 },
                                 __self: this
                             }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/incomplete/my', render: function render(props) {
-                                    return _react2.default.createElement(_UserIncompletePolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 87
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/logout', component: _Home2.default, __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 87
                                 },
                                 __self: this
                             }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/complete/my', render: function render(props) {
-                                    return _react2.default.createElement(_UserCompletePolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
-                                        __source: {
-                                            fileName: _jsxFileName,
-                                            lineNumber: 88
-                                        },
-                                        __self: _this4
-                                    }));
-                                }, __source: {
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/signup', component: _Home2.default, __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 88
                                 },
                                 __self: this
                             }),
-                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/search/:userId/:terms', render: function render(props) {
-                                    return _react2.default.createElement(_SearchPolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/portal', render: function render(props) {
+                                    return _react2.default.createElement(_PortalMessage2.default, Object.assign({ userId: _this4.state.userId, isAuth: _this4.state.isAuth }, props, {
                                         __source: {
                                             fileName: _jsxFileName,
                                             lineNumber: 89
@@ -451,9 +373,113 @@ var App = function (_Component) {
                                 },
                                 __self: this
                             }),
-                            _react2.default.createElement(_reactRouterDom.Route, { path: '/*', component: _NoMatch2.default, __source: {
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/polls', component: _AllPolls2.default, __source: {
                                     fileName: _jsxFileName,
                                     lineNumber: 90
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { path: '/polls/single/:id/:title', render: function render(props) {
+                                    return _react2.default.createElement(_SinglePoll2.default, Object.assign({ userId: _this4.state.userId, isAuth: _this4.state.isAuth }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 91
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 91
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { path: '/edit/my/:pollId', render: function render(props) {
+                                    return _react2.default.createElement(_PollEditor2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 92
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 92
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/create/new', render: function render(props) {
+                                    return _react2.default.createElement(_PollEditor2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 93
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 93
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/all/my', render: function render(props) {
+                                    return _react2.default.createElement(_AllUserPolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 94
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 94
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/incomplete/my', render: function render(props) {
+                                    return _react2.default.createElement(_UserIncompletePolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 95
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 95
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/complete/my', render: function render(props) {
+                                    return _react2.default.createElement(_UserCompletePolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 96
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 96
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/search/:userId/:terms', render: function render(props) {
+                                    return _react2.default.createElement(_SearchPolls2.default, Object.assign({ isAuth: _this4.state.isAuth, userId: _this4.state.userId }, props, {
+                                        __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 97
+                                        },
+                                        __self: _this4
+                                    }));
+                                }, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 97
+                                },
+                                __self: this
+                            }),
+                            _react2.default.createElement(_reactRouterDom.Route, { path: '/*', component: _NoMatch2.default, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 98
                                 },
                                 __self: this
                             })
@@ -465,16 +491,75 @@ var App = function (_Component) {
                     {
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 94
+                            lineNumber: 102
                         },
                         __self: this
                     },
-                    _react2.default.createElement('div', { className: 'container', __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 95
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'container', __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 103
+                            },
+                            __self: this
                         },
-                        __self: this
-                    })
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'flex flex-row flex-around flex-wrap', __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 104
+                                },
+                                __self: this
+                            },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'copyright-group', __source: {
+                                        fileName: _jsxFileName,
+                                        lineNumber: 105
+                                    },
+                                    __self: this
+                                },
+                                _react2.default.createElement('i', { className: 'fa fa-copyright', 'aria-hidden': 'true', __source: {
+                                        fileName: _jsxFileName,
+                                        lineNumber: 106
+                                    },
+                                    __self: this
+                                }),
+                                '\xA0',
+                                (0, _moment2.default)().format('YYYY'),
+                                '\xA0',
+                                _react2.default.createElement(
+                                    'a',
+                                    { href: 'http://www.wesleylhandy.net', target: '_blank', __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 106
+                                        },
+                                        __self: this
+                                    },
+                                    'Wesley L. Handy'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'github-group', __source: {
+                                        fileName: _jsxFileName,
+                                        lineNumber: 108
+                                    },
+                                    __self: this
+                                },
+                                _react2.default.createElement(
+                                    'a',
+                                    { className: 'github-button', href: 'https://github.com/wesleylhandy/uvote', 'data-show-count': 'true', 'aria-label': 'Star ntkme/github-buttons on GitHub', target: '_blank', __source: {
+                                            fileName: _jsxFileName,
+                                            lineNumber: 109
+                                        },
+                                        __self: this
+                                    },
+                                    'Star'
+                                )
+                            )
+                        )
+                    )
                 )
             );
         }

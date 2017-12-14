@@ -102,6 +102,7 @@ var Authentication = function (_Component) {
             isAuth: null
         };
         _this.handleInput = _this.handleInput.bind(_this);
+        _this.handleDelete = _this.handleDelete.bind(_this);
         _this.login = _this.login.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
         return _this;
@@ -111,6 +112,14 @@ var Authentication = function (_Component) {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({ modalIsOpen: false });
+        }
+    }, {
+        key: 'handleDelete',
+        value: function handleDelete(e) {
+            if (e.key === "Backspace") {
+                e.preventDefault();
+                this.setState({ password_field: { value: this.state.password_field.value.slice(0, -1), error_label: '', validation: '', status: 'valid' }, dots: this.state.dots.slice(0, -1) });
+            }
         }
     }, {
         key: 'handleInput',
@@ -131,26 +140,61 @@ var Authentication = function (_Component) {
             this.setState({ isAuth: this.props.isAuth });
         }
     }, {
+        key: 'renderMessage',
+        value: function renderMessage(location) {
+            var _ref = location.state || { from: { pathname: '/' } },
+                from = _ref.from;
+
+            return from.pathname === '/' ? _react2.default.createElement(
+                'p',
+                {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 114
+                    },
+                    __self: this
+                },
+                'Enter your email address and password'
+            ) : _react2.default.createElement(
+                'p',
+                {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 114
+                    },
+                    __self: this
+                },
+                'You must log in to view the page at ',
+                _react2.default.createElement(
+                    'code',
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 114
+                        },
+                        __self: this
+                    },
+                    from.pathname
+                )
+            );
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
-            var _ref = this.props.location.state || { from: { pathname: '/' } },
-                from = _ref.from;
-
-            var message = from.pathname === '/' ? 'Enter your email address and password' : 'You must log in to view the page at ' + from.pathname;
             var redirect = function redirect() {
                 if (_this2.state.isAuth) {
                     return _react2.default.createElement(_reactRouterDom.Redirect, { to: _this2.props.history.location.pathname !== '/login' ? _this2.props.history.location.pathname : '/portal', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 109
+                            lineNumber: 119
                         },
                         __self: _this2
                     });
                 } else if (!_this2.state.modalIsOpen) {
                     return _react2.default.createElement(_reactRouterDom.Redirect, { to: _this2.props.history.location.pathname !== '/login' ? _this2.props.history.location.pathname : '/', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 110
+                            lineNumber: 120
                         },
                         __self: _this2
                     });
@@ -160,7 +204,7 @@ var Authentication = function (_Component) {
                 'section',
                 { className: 'auth-section', __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 113
+                        lineNumber: 123
                     },
                     __self: this
                 },
@@ -172,26 +216,16 @@ var Authentication = function (_Component) {
                         style: customStyles,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 114
+                            lineNumber: 124
                         },
                         __self: this
                     },
-                    _react2.default.createElement(
-                        'p',
-                        {
-                            __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 119
-                            },
-                            __self: this
-                        },
-                        message
-                    ),
+                    this.renderMessage(this.props.location),
                     _react2.default.createElement(
                         'form',
                         { onSubmit: this.login, className: this.props.isAuth ? 'auth-form hidden' : 'auth-form', __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 120
+                                lineNumber: 130
                             },
                             __self: this
                         },
@@ -199,7 +233,7 @@ var Authentication = function (_Component) {
                             'div',
                             { className: 'form-group', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 121
+                                    lineNumber: 131
                                 },
                                 __self: this
                             },
@@ -207,7 +241,7 @@ var Authentication = function (_Component) {
                                 'div',
                                 { className: 'required', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 122
+                                        lineNumber: 132
                                     },
                                     __self: this
                                 },
@@ -217,13 +251,13 @@ var Authentication = function (_Component) {
                                 'label',
                                 { htmlFor: 'username', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 123
+                                        lineNumber: 133
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-user-o', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 123
+                                        lineNumber: 133
                                     },
                                     __self: this
                                 })
@@ -232,7 +266,7 @@ var Authentication = function (_Component) {
                                 'div',
                                 { className: this.state.username_field.status !== 'error' ? 'hidden' : 'validation', required: true, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 124
+                                        lineNumber: 134
                                     },
                                     __self: this
                                 },
@@ -240,7 +274,7 @@ var Authentication = function (_Component) {
                             ),
                             _react2.default.createElement('input', { type: 'email', name: 'username', placeholder: 'you@example.com', value: this.state.username_field.value, onChange: this.handleInput, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 125
+                                    lineNumber: 135
                                 },
                                 __self: this
                             })
@@ -249,7 +283,7 @@ var Authentication = function (_Component) {
                             'div',
                             { className: 'form-group', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 127
+                                    lineNumber: 137
                                 },
                                 __self: this
                             },
@@ -257,7 +291,7 @@ var Authentication = function (_Component) {
                                 'div',
                                 { className: 'required', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 128
+                                        lineNumber: 138
                                     },
                                     __self: this
                                 },
@@ -267,13 +301,13 @@ var Authentication = function (_Component) {
                                 'label',
                                 { htmlFor: 'password', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 129
+                                        lineNumber: 139
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-key', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 129
+                                        lineNumber: 139
                                     },
                                     __self: this
                                 })
@@ -282,15 +316,15 @@ var Authentication = function (_Component) {
                                 'div',
                                 { className: this.state.password_field.status !== 'error' ? 'hidden' : 'validation', required: true, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 130
+                                        lineNumber: 140
                                     },
                                     __self: this
                                 },
                                 this.state.password_field.validation
                             ),
-                            _react2.default.createElement('input', { type: 'text', name: 'password', placeholder: 'ex: abc123D$', value: this.state.dots, onChange: this.handleInput, __source: {
+                            _react2.default.createElement('input', { type: 'text', name: 'password', placeholder: 'ex: abc123D$', value: this.state.dots, onChange: this.handleInput, onKeyDown: this.handleDelete, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 131
+                                    lineNumber: 141
                                 },
                                 __self: this
                             })
@@ -299,12 +333,22 @@ var Authentication = function (_Component) {
                             'button',
                             { onClick: this.login, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 133
+                                    lineNumber: 143
                                 },
                                 __self: this
                             },
                             'Log In'
                         )
+                    ),
+                    _react2.default.createElement(
+                        _reactRouterDom.Link,
+                        { to: '/signup', __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 145
+                            },
+                            __self: this
+                        },
+                        'Click here to Signup'
                     )
                 ),
                 redirect()

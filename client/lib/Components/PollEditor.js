@@ -87,7 +87,6 @@ var PollEditor = function (_Component) {
             var _this2 = this;
 
             e.preventDefault();
-
             (0, _helpers.addTitle)(this.state.userId, this.state.pollId, this.state.title, this.state.isAuth).then(function (res) {
                 console.log('Title Saved');_this2.setState({ titleSaved: true, pollURL: res.poll.url });
             }).catch(function (err) {
@@ -102,8 +101,7 @@ var PollEditor = function (_Component) {
             e.preventDefault();
 
             (0, _helpers.deletePoll)(this.state.pollId, this.state.userId, this.state.isAuth).then(function (res) {
-                console.log(res);
-                _this3.setState({ pollDeleted: true });
+                return _this3.setState({ pollDeleted: true });
             }).catch(function (err) {
                 return console.error(err);
             });
@@ -114,12 +112,13 @@ var PollEditor = function (_Component) {
             var _this4 = this;
 
             e.preventDefault();
-
-            (0, _helpers.savePoll)(this.state.userId, this.state.pollId, this.state.isAuth).then(function (success) {
-                console.log('Poll Saved');_this4.setState({ pollSaved: true });
-            }).catch(function (err) {
-                return console.error(err);
-            });
+            if (this.state.titleSaved) {
+                (0, _helpers.savePoll)(this.state.userId, this.state.pollId, this.state.isAuth).then(function (success) {
+                    return _this4.setState({ pollSaved: true });
+                }).catch(function (err) {
+                    return console.error(err);
+                });
+            } else alert("Please save all the elements of your poll before saving the entire poll.");
         }
 
         //OPTIONS
@@ -170,8 +169,7 @@ var PollEditor = function (_Component) {
             } else {
                 var inputId = e.target.id;
                 (0, _helpers.deleteOption)(this.state.userId, this.state.pollId, inputId, this.state.isAuth).then(function (res) {
-                    console.log(res);
-                    _this6.updatePollData(_this6.state.userId, _this6.state.pollId);
+                    return _this6.updatePollData(_this6.state.userId, _this6.state.pollId);
                 }).catch(function (err) {
                     return console.error(err);
                 });
@@ -183,7 +181,6 @@ var PollEditor = function (_Component) {
     }, {
         key: 'handleReturn',
         value: function handleReturn(e) {
-            console.log({ return: e.key });
             if (e.target.name === 'title' && e.key === "Enter") {
                 e.preventDefault();
                 return this.handleTitleSave(e.target.name);
@@ -263,7 +260,7 @@ var PollEditor = function (_Component) {
                     'div',
                     { className: 'editor-inputs', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 191
+                            lineNumber: 182
                         },
                         __self: this
                     },
@@ -272,7 +269,7 @@ var PollEditor = function (_Component) {
                             'div',
                             { className: 'option-input-group', key: index, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 194
+                                    lineNumber: 185
                                 },
                                 __self: _this9
                             },
@@ -280,11 +277,11 @@ var PollEditor = function (_Component) {
                                 'label',
                                 { htmlFor: input.saved ? "saved" + index : index, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 195
+                                        lineNumber: 186
                                     },
                                     __self: _this9
                                 },
-                                'Order ',
+                                'Option ',
                                 index + 1
                             ),
                             _react2.default.createElement('input', {
@@ -297,7 +294,7 @@ var PollEditor = function (_Component) {
                                 disabled: input.saved ? true : false,
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 196
+                                    lineNumber: 187
                                 },
                                 __self: _this9
                             }),
@@ -305,13 +302,13 @@ var PollEditor = function (_Component) {
                                 'button',
                                 { id: 'save' + index, className: input.saved ? 'hidden' : 'save-button', onClick: _this9.handleOptionSave, name: input.saved ? "saved" + index : index, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 205
+                                        lineNumber: 196
                                     },
                                     __self: _this9
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-floppy-o', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 205
+                                        lineNumber: 196
                                     },
                                     __self: _this9
                                 })
@@ -320,13 +317,13 @@ var PollEditor = function (_Component) {
                                 'button',
                                 { className: input.saved ? 'hidden' : 'clear-button', onClick: _this9.handleClear, name: input.saved ? "saved" + index : index, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 206
+                                        lineNumber: 197
                                     },
                                     __self: _this9
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-eraser', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 206
+                                        lineNumber: 197
                                     },
                                     __self: _this9
                                 })
@@ -335,13 +332,13 @@ var PollEditor = function (_Component) {
                                 'button',
                                 { id: input.hasOwnProperty('_id') ? input._id : 'id' + index, className: 'delete-button', onClick: _this9.handleDeleteOption, name: input.saved ? "saved" + index : index, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 207
+                                        lineNumber: 198
                                     },
                                     __self: _this9
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 207
+                                        lineNumber: 198
                                     },
                                     __self: _this9
                                 })
@@ -360,7 +357,7 @@ var PollEditor = function (_Component) {
                         'div',
                         { className: 'poll-editor', __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 221
+                                lineNumber: 212
                             },
                             __self: this
                         },
@@ -368,7 +365,7 @@ var PollEditor = function (_Component) {
                             'div',
                             { className: 'title-input-group', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 222
+                                    lineNumber: 213
                                 },
                                 __self: this
                             },
@@ -376,7 +373,7 @@ var PollEditor = function (_Component) {
                                 'label',
                                 { htmlFor: 'title', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 223
+                                        lineNumber: 214
                                     },
                                     __self: this
                                 },
@@ -392,7 +389,7 @@ var PollEditor = function (_Component) {
                                 disabled: this.state.titleSaved ? true : false,
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 224
+                                    lineNumber: 215
                                 },
                                 __self: this
                             }),
@@ -400,13 +397,13 @@ var PollEditor = function (_Component) {
                                 'button',
                                 { className: this.state.titleSaved ? 'hidden' : 'save-button', onClick: this.handleTitleSave, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 233
+                                        lineNumber: 224
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-floppy-o', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 233
+                                        lineNumber: 224
                                     },
                                     __self: this
                                 })
@@ -415,13 +412,13 @@ var PollEditor = function (_Component) {
                                 'button',
                                 { className: this.state.titleSaved ? 'hidden' : 'clear-button', onClick: this.handleClear, name: 'title', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 234
+                                        lineNumber: 225
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-eraser', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 234
+                                        lineNumber: 225
                                     },
                                     __self: this
                                 })
@@ -431,7 +428,7 @@ var PollEditor = function (_Component) {
                             'div',
                             { className: 'option-inputs', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 237
+                                    lineNumber: 228
                                 },
                                 __self: this
                             },
@@ -440,7 +437,7 @@ var PollEditor = function (_Component) {
                                 'div',
                                 { className: 'poll-controls', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 239
+                                        lineNumber: 230
                                     },
                                     __self: this
                                 },
@@ -448,14 +445,14 @@ var PollEditor = function (_Component) {
                                     'button',
                                     { className: this.state.options.length === this.state.numSavedOptions ? 'add-button' : 'hidden', onClick: this.addOptionInput, __source: {
                                             fileName: _jsxFileName,
-                                            lineNumber: 240
+                                            lineNumber: 231
                                         },
                                         __self: this
                                     },
                                     'New Option ',
                                     _react2.default.createElement('i', { className: 'fa fa-plus-square-o', 'aria-hidden': 'true', __source: {
                                             fileName: _jsxFileName,
-                                            lineNumber: 240
+                                            lineNumber: 231
                                         },
                                         __self: this
                                     })
@@ -464,22 +461,22 @@ var PollEditor = function (_Component) {
                                     'div',
                                     { className: 'save-delete', __source: {
                                             fileName: _jsxFileName,
-                                            lineNumber: 241
+                                            lineNumber: 232
                                         },
                                         __self: this
                                     },
                                     _react2.default.createElement(
                                         'button',
-                                        { className: this.state.numSavedOptions >= 2 && this.state.options.length === this.state.numSavedOptions ? 'save-button' : 'hidden', onClick: this.handleSavePoll, __source: {
+                                        { className: this.state.titleSaved && this.state.numSavedOptions >= 2 && this.state.options.length === this.state.numSavedOptions ? 'save-button' : 'hidden', onClick: this.handleSavePoll, __source: {
                                                 fileName: _jsxFileName,
-                                                lineNumber: 242
+                                                lineNumber: 233
                                             },
                                             __self: this
                                         },
                                         'Save Poll ',
                                         _react2.default.createElement('i', { className: 'fa fa-floppy-o', 'aria-hidden': 'true', __source: {
                                                 fileName: _jsxFileName,
-                                                lineNumber: 242
+                                                lineNumber: 233
                                             },
                                             __self: this
                                         })
@@ -488,14 +485,14 @@ var PollEditor = function (_Component) {
                                         'button',
                                         { className: 'delete-button', onClick: this.handleDeletePoll, __source: {
                                                 fileName: _jsxFileName,
-                                                lineNumber: 243
+                                                lineNumber: 234
                                             },
                                             __self: this
                                         },
                                         'Delete Poll ',
                                         _react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', __source: {
                                                 fileName: _jsxFileName,
-                                                lineNumber: 243
+                                                lineNumber: 234
                                             },
                                             __self: this
                                         })
@@ -507,7 +504,7 @@ var PollEditor = function (_Component) {
                 } else if (this.state.pollDeleted) {
                     return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/all/my', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 250
+                            lineNumber: 241
                         },
                         __self: this
                     });
@@ -516,7 +513,7 @@ var PollEditor = function (_Component) {
                         state: { from: { pathname: this.props.location } }
                     }, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 251
+                        lineNumber: 242
                     },
                     __self: this
                 });
@@ -525,7 +522,7 @@ var PollEditor = function (_Component) {
                     state: { from: { pathname: this.props.location } }
                 }, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 255
+                    lineNumber: 246
                 },
                 __self: this
             });

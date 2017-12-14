@@ -183,7 +183,7 @@ export default class PollEditor extends Component {
                 { inputs.map((input, index)=>{
                         return (
                             <div className="option-input-group" key={index}>
-                                <label htmlFor={input.saved ? "saved" + index : index}>Order {index + 1}</label>
+                                <label htmlFor={input.saved ? "saved" + index : index}>Option {index + 1}</label>
                                 <input 
                                     type='text' 
                                     value={input.title} 

@@ -109,10 +109,12 @@ export default class Authentication extends Component {
         this.setState({isAuth: this.props.isAuth});
     }
 
-    render() {
+    renderMessage(location) {
+        const { from } = location.state || { from: { pathname: '/' } }
+        return from.pathname === '/' ? <p>Enter your email address and password</p> : <p>You must log in to view the page at <code>{from.pathname}</code></p>;
+    }
 
-        const { from } = this.props.location.state || { from: { pathname: '/' } }
-        const message = from.pathname === '/' ? `Enter your email address and password` : `You must log in to view the page at ${from.pathname}`;
+    render() {
         const redirect = () => {
             if(this.state.isAuth) {return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/portal'}/>}
             else if (!this.state.modalIsOpen) { return <Redirect to={this.props.history.location.pathname !== '/login' ? this.props.history.location.pathname : '/'}/>}
@@ -124,7 +126,7 @@ export default class Authentication extends Component {
                     onRequestClose={this.closeModal}
                     style={customStyles}
                 >
-                    <p>{ message }</p>
+                    { this.renderMessage(this.props.location) }
                     <form onSubmit={this.login} className={this.props.isAuth ? 'auth-form hidden' : 'auth-form'}>
                         <div className='form-group'>
                             <div className='required'>{this.state.username_field.error_label}</div>

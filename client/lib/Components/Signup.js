@@ -65,6 +65,7 @@ var SignUp = function (_Component) {
         };
         _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.handleInput = _this.handleInput.bind(_this);
+        _this.handleDelete = _this.handleDelete.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
         return _this;
     }
@@ -73,6 +74,14 @@ var SignUp = function (_Component) {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({ modalIsOpen: false });
+        }
+    }, {
+        key: 'handleDelete',
+        value: function handleDelete(e) {
+            if (e.key === "Backspace") {
+                e.preventDefault();
+                this.setState({ password_field: { value: this.state.password_field.value.slice(0, -1), error_label: '', validation: '', status: 'valid' }, dots: this.state.dots.slice(0, -1) });
+            }
         }
     }, {
         key: 'handleInput',
@@ -171,14 +180,14 @@ var SignUp = function (_Component) {
                 if (_this3.state.isAuth) {
                     return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/portal', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 128
+                            lineNumber: 136
                         },
                         __self: _this3
                     });
                 } else if (!_this3.state.modalIsOpen) {
                     return _react2.default.createElement(_reactRouterDom.Redirect, { to: '/', __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 129
+                            lineNumber: 137
                         },
                         __self: _this3
                     });
@@ -188,7 +197,7 @@ var SignUp = function (_Component) {
                 'section',
                 { className: 'auth-section', __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 132
+                        lineNumber: 140
                     },
                     __self: this
                 },
@@ -200,7 +209,7 @@ var SignUp = function (_Component) {
                         style: customStyles,
                         __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 133
+                            lineNumber: 141
                         },
                         __self: this
                     },
@@ -209,7 +218,7 @@ var SignUp = function (_Component) {
                         {
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 138
+                                lineNumber: 146
                             },
                             __self: this
                         },
@@ -219,7 +228,7 @@ var SignUp = function (_Component) {
                         'form',
                         { onSubmit: this.handleSubmit, className: 'auth-form', __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 139
+                                lineNumber: 147
                             },
                             __self: this
                         },
@@ -227,7 +236,7 @@ var SignUp = function (_Component) {
                             'div',
                             { className: 'form-group', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 140
+                                    lineNumber: 148
                                 },
                                 __self: this
                             },
@@ -235,7 +244,7 @@ var SignUp = function (_Component) {
                                 'div',
                                 { className: 'required', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 141
+                                        lineNumber: 149
                                     },
                                     __self: this
                                 },
@@ -245,13 +254,13 @@ var SignUp = function (_Component) {
                                 'label',
                                 { htmlFor: 'username', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 142
+                                        lineNumber: 150
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-user-o', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 142
+                                        lineNumber: 150
                                     },
                                     __self: this
                                 })
@@ -260,7 +269,7 @@ var SignUp = function (_Component) {
                                 'div',
                                 { className: this.state.username_field.status !== 'error' ? 'hidden' : 'validation', required: true, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 143
+                                        lineNumber: 151
                                     },
                                     __self: this
                                 },
@@ -268,7 +277,7 @@ var SignUp = function (_Component) {
                             ),
                             _react2.default.createElement('input', { type: 'email', name: 'username', placeholder: 'you@example.com', value: this.state.username_field.value, onChange: this.handleInput, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 144
+                                    lineNumber: 152
                                 },
                                 __self: this
                             })
@@ -277,7 +286,7 @@ var SignUp = function (_Component) {
                             'div',
                             { className: 'form-group', __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 146
+                                    lineNumber: 154
                                 },
                                 __self: this
                             },
@@ -285,7 +294,7 @@ var SignUp = function (_Component) {
                                 'div',
                                 { className: 'required', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 147
+                                        lineNumber: 155
                                     },
                                     __self: this
                                 },
@@ -295,13 +304,13 @@ var SignUp = function (_Component) {
                                 'label',
                                 { htmlFor: 'password', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 148
+                                        lineNumber: 156
                                     },
                                     __self: this
                                 },
                                 _react2.default.createElement('i', { className: 'fa fa-key', 'aria-hidden': 'true', __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 148
+                                        lineNumber: 156
                                     },
                                     __self: this
                                 })
@@ -310,15 +319,15 @@ var SignUp = function (_Component) {
                                 'div',
                                 { className: this.state.password_field.status !== 'error' ? 'hidden' : 'validation', required: true, __source: {
                                         fileName: _jsxFileName,
-                                        lineNumber: 149
+                                        lineNumber: 157
                                     },
                                     __self: this
                                 },
                                 this.state.password_field.validation
                             ),
-                            _react2.default.createElement('input', { type: 'text', name: 'password', placeholder: 'ex: abc123D$', value: this.state.dots, onChange: this.handleInput, __source: {
+                            _react2.default.createElement('input', { type: 'text', name: 'password', placeholder: 'ex: abc123D$', value: this.state.dots, onChange: this.handleInput, onKeyDown: this.handleDelete, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 150
+                                    lineNumber: 158
                                 },
                                 __self: this
                             })
@@ -327,12 +336,22 @@ var SignUp = function (_Component) {
                             'button',
                             { onClick: this.handleSubmit, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 152
+                                    lineNumber: 160
                                 },
                                 __self: this
                             },
                             'Sign Up'
                         )
+                    ),
+                    _react2.default.createElement(
+                        _reactRouterDom.Link,
+                        { to: '/login', __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 162
+                            },
+                            __self: this
+                        },
+                        'Click here to login'
                     )
                 ),
                 redirect()

@@ -9,7 +9,7 @@ module.exports = function(app) {
                 var completedPolls = user.polls.filter(function(poll) {
                     return poll.status == 'complete'
                 });
-                res.json({ polls: completedPolls });
+                res.json({ polls: completedPolls.reverse() });
             }).catch(err => {
                 res.statusCode = 500;
                 res.json({ title: 'Error', message: err });
@@ -97,7 +97,7 @@ module.exports = function(app) {
                     res.statusCode = 500;
                     return res.json({ title: 'Error', message: err });
                 }
-                res.json({ polls });
+                res.json({ polls: polls.reverse() });
             }
         );
     });
